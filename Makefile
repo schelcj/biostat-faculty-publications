@@ -7,4 +7,4 @@ parse:
 	bin/parse.pl
 
 clean:
-	rm -f data/*.bib data/*.json
+	rm -f data/*.bib public/json/*.json
