@@ -1,4 +1,6 @@
 $(document).ready(function() {
+  var title_colspan = '4';
+
   $.getJSON('json/faculty.json', function(data) {
     $.each(data, function(key, val) {
       $('<option />', {value: key, text: val.name, url: val.url}).appendTo('#faculty_selector');
@@ -33,9 +35,16 @@ $(document).ready(function() {
       'aoColumnDefs': [{
         'aTargets':      ['_all'],
         'fnCreatedCell': function (nTd, sData, oData, iRow, iCol) {
-            $(nTd).attr('title',sData);
+          $(nTd).attr('title',sData);
+
+          if (iCol == 0) {
+            $(nTd).attr('colspan', title_colspan);
+          }
         }
-      }]
+      }],
+      'fnHeaderCallback': function (nHead, aData, iStart, iEnd, aiDisplay) {
+        $(nHead).find('th').first().attr('colspan', title_colspan);
+      }
     });
   });
 });
