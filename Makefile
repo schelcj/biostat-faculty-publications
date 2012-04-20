@@ -1,4 +1,4 @@
-all: clean collect parse
+all: clean collect parse install
 
 collect:
 	bin/collect.pl
@@ -8,3 +8,7 @@ parse:
 
 clean:
 	rm -f data/*.bib public/json/*.json
+
+install:
+	cp -r public/* /afs/umich.edu/group/s/sph/web/htdocs/biostat/publications
+	chmod 755 /afs/umich.edu/group/s/sph/web/htdocs/biostat/publications/index.html
