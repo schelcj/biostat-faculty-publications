@@ -19,7 +19,7 @@ Readonly::Scalar my $JSON_VAR => q{aaData};
 Readonly::Scalar my $BASE_URL => q{http://scholar.google.com/citations?user=%s};
 
 Readonly::Array my @FACULTY => LoadFile(qq{$Bin/../config/faculty.yml});
-Readonly::Array my @COLUMNS => (qw(title author journal volume number pages year publisher));
+Readonly::Array my @COLUMNS => (qw(title author journal volume number pages year));
 
 my $json        = JSON->new();
 my @exports     = read_dir($DATA_DIR);
