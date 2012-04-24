@@ -15,9 +15,6 @@ if (typeof(jQuery) != 'undefined') { (function($) {
       }).appendTo($('#google_scholar_link').empty());
 
       $('#publications').dataTable({
-        // 'bScrollInfinite': true,
-        // 'bScrollCollapse': true,
-        // 'sScrollY':        '500px',
         'bAutoWidth':  false,
         'bProcessing': true,
         'bDestroy':    true,
