@@ -22,7 +22,7 @@ Readonly::Scalar my $BASE_URL => q{http://scholar.google.com/citations?user=};
 Readonly::Array my @FACULTY => LoadFile(qq{$Bin/../config/faculty.yml});
 Readonly::Array my @COLUMNS => (qw(title author journal volume number pages year));
 
-my $json        = JSON->new();
+my $json        = JSON->new()->utf8;
 my @exports     = read_dir($DATA_DIR);
 my $faculty_ref = {};
 
@@ -43,7 +43,7 @@ foreach my $export (@exports) {
     push @publications, [map {$entry->field($_)} @COLUMNS];
   }
 
-  write_file(qq[$JSON_DIR/$gid.json], $json->pretty->encode({$JSON_VAR => \@publications}));
+  write_file(qq[$JSON_DIR/$gid.json], $json->encode({$JSON_VAR => \@publications}));
 
   $faculty_ref->{$gid} = {
     name => $member->{name},
@@ -51,4 +51,4 @@ foreach my $export (@exports) {
   };
 }
 
-write_file($FAC_JSON, $json->pretty->encode($faculty_ref));
+write_file($FAC_JSON, $json->encode($faculty_ref));
