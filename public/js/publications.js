@@ -11,7 +11,8 @@ if (typeof(jQuery) != 'undefined') { (function($) {
     $('#faculty_selector').change(function() {
       $('<a />', {
         href: $(':selected', this).attr('url'),
-        text: 'Google Scholar Profile'
+        text: 'Google Scholar Profile',
+        target: '_new'
       }).appendTo($('#google_scholar_link').empty());
 
       $('#publications').dataTable({
@@ -32,10 +33,15 @@ if (typeof(jQuery) != 'undefined') { (function($) {
         'aoColumnDefs': [{
           'aTargets':      ['_all'],
           'fnCreatedCell': function (nTd, sData, oData, iRow, iCol) {
-            $(nTd).attr('title',sData);
+            $(nTd).attr('title', sData);
 
             if (iCol == 0) {
               $(nTd).attr('colspan', title_colspan);
+              $('<a />', {
+                href:   'http://www.ncbi.nlm.nih.gov/pubmed?term=' + sData + '[Title]',
+                text:   sData,
+                target: '_new'
+              }).appendTo($(nTd).empty());
             }
           }
         }],
