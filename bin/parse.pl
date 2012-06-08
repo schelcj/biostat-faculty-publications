@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 
+use FindBin qw($Bin);
+use lib qq($Bin/../lib/perl5);
 use Modern::Perl;
 use FindBin qw($Bin);
 use IO::File;
@@ -11,7 +13,6 @@ use Readonly;
 use JSON;
 use Text::Autoformat;
 use YAML qw(LoadFile);
-use feature qw(unicode_strings);
 
 Readonly::Scalar my $DATA_DIR => qq{$Bin/../data};
 Readonly::Scalar my $JSON_DIR => qq{$Bin/../public/json};
