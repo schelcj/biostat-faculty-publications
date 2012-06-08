@@ -24,7 +24,7 @@ Readonly::Array my @COLUMNS => (qw(title author journal volume number pages year
 
 my $json        = JSON->new()->utf8;
 my @exports     = read_dir($DATA_DIR);
-my $faculty_ref = {};
+my $faculty_ref = [];
 
 foreach my $export (@exports) {
   my @publications = ();
@@ -45,10 +45,11 @@ foreach my $export (@exports) {
 
   write_file(qq[$JSON_DIR/$gid.json], $json->encode({$JSON_VAR => \@publications}));
 
-  $faculty_ref->{$gid} = {
+  push @{$faculty_ref}, {
+    gid  => $gid,
     name => $member->{name},
     url  => $BASE_URL . $gid,
   };
 }
 
-write_file($FAC_JSON, $json->encode($faculty_ref));
+write_file($FAC_JSON, $json->encode([sort {$a->{name} cmp $b->{name}} @{$faculty_ref}]));
