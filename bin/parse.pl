@@ -3,7 +3,6 @@
 use FindBin qw($Bin);
 use lib qq($Bin/../lib/perl5);
 use Modern::Perl;
-use FindBin qw($Bin);
 use IO::File;
 use File::PathInfo;
 use BibTeX::Parser;

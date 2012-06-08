@@ -3,7 +3,6 @@
 use FindBin qw($Bin);
 use lib qq($Bin/../lib/perl5);
 use Modern::Perl;
-use FindBin qw($Bin);
 use WWW::Mechanize;
 use YAML qw(LoadFile);
 use File::Slurp qw(write_file);
