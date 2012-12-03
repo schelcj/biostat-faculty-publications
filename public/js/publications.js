@@ -4,7 +4,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
 
     $.getJSON('json/faculty.json', function(data) {
       $.each(data, function(key, val) {
-        $('<option />', {value: key, text: val.name, url: val.url}).appendTo('#faculty_selector');
+        $('<option />', {value: val.gid, text: val.name, url: val.url}).appendTo('#faculty_selector');
       });
     });
 
