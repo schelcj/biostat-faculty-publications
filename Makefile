@@ -11,4 +11,4 @@ clean:
 
 install:
 	cp -r public/* /afs/umich.edu/group/s/sph/web/htdocs/biostat/publications
-	chmod 755 /afs/umich.edu/group/s/sph/web/htdocs/biostat/publications/index.html
+	chmod 755 /afs/umich.edu/group/s/sph/web/htdocs/biostat/publications/*.html

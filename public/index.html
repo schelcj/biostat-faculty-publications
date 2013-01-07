@@ -56,34 +56,15 @@
         <h1 id="dept_title">Department of Biostatistics <img src="/biostat/images/june08/blocks.gif" width="165" height="17" alt="" style="vertical-align:middle" /></h1>
         <h1>Faculty Member Publications</h1>
 
-        <!-- Google Scholar -->
-        <form method="get" action="http://scholar.google.com/scholar">
-          <a href="http://scholar.google.com/"><img src="http://scholar.google.com/scholar/scholar_sm.gif" alt="Google Scholar" width="105" height="40" border="0" align="absmiddle" /></a>
-          <input type="hidden" name="hl" value="en">
-          <input type="text" name="q" size="25" maxlength="255" />
-          <input type="submit" name="btnG" value="Search" />
-        </form>
-        <!-- Google Scholar -->
+        <h3 id="faculty_member_name"></h3>
 
-        <div id="faculty">
-          <p>Select a Faculty Member:</p>
-          <form>
-            <select id="faculty_selector">
-              <option>----</option>
-            </select>
-            <span id="google_scholar_link"></span>
-          </form>
+        <a id="faculty_list" href="#">Faculty List</a>
+
+        <!--#include virtual="/biostat/publications/faculty.html" -->
+
+        <div id="publication_container">
+          <table id="publications" cellpadding="0" cellspacing="0" border="0" class="dataTable"></table>
         </div>
-
-        <table id="faculty" cellpadding="0" cellspacing="0" border="0" class="dataTable">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Google Scholar Profile</th>
-            </tr>
-          </thead>
-        </table>
-        <table id="publications" cellpadding="0" cellspacing="0" border="0" class="dataTable"></table>
       </td>
 
         <!--#include virtual="/biostat/computing/quicklinks.html" -->

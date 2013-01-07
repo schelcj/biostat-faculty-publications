@@ -12,12 +12,15 @@ use Readonly;
 use JSON;
 use Text::Autoformat;
 use YAML qw(LoadFile);
+use HTML::Template;
 
-Readonly::Scalar my $DATA_DIR => qq{$Bin/../data};
-Readonly::Scalar my $JSON_DIR => qq{$Bin/../public/json};
-Readonly::Scalar my $FAC_JSON => qq{$JSON_DIR/faculty.json};
-Readonly::Scalar my $JSON_VAR => q{aaData};
-Readonly::Scalar my $BASE_URL => q{http://scholar.google.com/citations?user=};
+Readonly::Scalar my $DATA_DIR     => qq{$Bin/../data};
+Readonly::Scalar my $TEMPLATE_DIR => qq{$Bin/../lib/templates};
+Readonly::Scalar my $PUBLIC_DIR   => qq{$Bin/../public};
+Readonly::Scalar my $JSON_DIR     => qq{$PUBLIC_DIR/json};
+Readonly::Scalar my $FAC_HTML     => qq{$PUBLIC_DIR/faculty.html};
+Readonly::Scalar my $JSON_VAR     => q{aaData};
+Readonly::Scalar my $BASE_URL     => q{http://scholar.google.com/citations?user=};
 
 Readonly::Array my @FACULTY => LoadFile(qq{$Bin/../config/faculty.yml});
 Readonly::Array my @COLUMNS => (qw(title author journal volume number pages year));
@@ -52,4 +55,20 @@ foreach my $export (@exports) {
   };
 }
 
-write_file($FAC_JSON, $json->encode([sort {$a->{name} cmp $b->{name}} @{$faculty_ref}]));
+my $tmpl = HTML::Template->new(
+  filename => qq{$TEMPLATE_DIR/faculty.html.tmpl},
+  utf8     => 1,
+);
+
+my $params = {
+  faculty => [
+    map {
+      name => $_->{name},
+      gid  => $_->{gid},
+      url  => $_->{url},
+    }, sort {$a->{name} cmp $b->{name}} @{$faculty_ref}
+  ]
+};
+
+$tmpl->param($params);
+write_file($FAC_HTML, $tmpl->output);
