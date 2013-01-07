@@ -15,7 +15,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
 
     $('#faculty tbody tr td.member').each(function(i,e) {
       $(e).click(function() {
-        $('#faculty_container').hide('fase', function() {
+        $('#faculty_container').hide('fast', function() {
          $('#faculty_member_name').text($(e).find('a').text());
          $('#publications').empty();
 
