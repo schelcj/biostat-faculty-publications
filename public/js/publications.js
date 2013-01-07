@@ -5,8 +5,15 @@ if (typeof(jQuery) != 'undefined') { (function($) {
     $.getJSON('json/faculty.json', function(data) {
       $.each(data, function(key, val) {
         $('<option />', {value: val.gid, text: val.name, url: val.url}).appendTo('#faculty_selector');
+
+        var row = $('<tr />');
+        $('<td />', {text: val.name}).appendTo(row);
+        $('<a />', {href: val.url, text: val.url}).appendTo($('<td />')).appendTo(row);
+        $(row).appendTo($('#faculty tbody'));
       });
     });
+
+    $('#faculty').dataTable();
 
     $('#faculty_selector').change(function() {
       $('<a />', {
