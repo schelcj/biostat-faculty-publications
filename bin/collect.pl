@@ -3,31 +3,75 @@
 use FindBin qw($Bin);
 use lib qq($Bin/../lib/perl5);
 use Modern::Perl;
-use WWW::Mechanize;
 use YAML qw(LoadFile);
-use File::Slurp qw(write_file);
-use Readonly;
-use URI;
+use Mojo::UserAgent;
+use Data::Dumper;
 
-Readonly::Scalar my $BASE_URL        => 'http://scholar.google.com/citations?view_op=export_citations&hl=en&user=';
-Readonly::Scalar my $EXPORT_FORMAT   => 0;
-Readonly::Scalar my $EXPORT_BTN_TEXT => q{Export all articles by };
+my @faculty       = LoadFile(qq{$Bin/../config/faculty.yml});
+my $base_url      = q{http://scholar.google.com};
+my $cite_list_url = $base_url . q{/citations?hl=en&pagesize=100&user=};
+my $css_path_ref  = {
+  item      => q{td#col-title a.cit-dark-large-link},
+  title     => q{div#main_sec.g-section div.cit-dl div.cit-dd div#title a},
+  title_alt => q{div#main_sec.g-section div.cit-dl div.cit-dd div#title},
+  authors   => q{div#main_sec.g-section div.cit-dl div.g-section div.cit-dd},
+  pub_date  => q{div#main_sec.g-section div.cit-dl div#pubdate_sec.g-section div.cit-dd},
+  journal   => q{div#main_sec.g-section div.cit-dl div#venue_sec.g-section div.cit-dd},
+  volume    => q{div#main_sec.g-section div.cit-dl div#volume_sec.g-section div.cit-dd},
+  issue     => q{div#main_sec.g-section div.cit-dl div#issue_sec.g-section div.cit-dd},
+};
 
-Readonly::Array my @FACULTY => LoadFile(qq{$Bin/../config/faculty.yml});
+for my $member (@faculty) {
+  my $agent   = get_agent();
+  my $pub_ref = {};
 
-foreach my $member (@FACULTY) {
-  my $uri   = URI->new($BASE_URL . $member->{gid});
-  my $agent = WWW::Mechanize->new();
+  $agent->get($cite_list_url . $member->{gid})->res->dom->find($css_path_ref->{item})->each(
+    sub {
+      my $cite_url = $base_url . $_->attrs('href');
+      my $ua       = get_agent();
+      my $dom      = $ua->get($cite_url)->res->dom();
 
-  $agent->agent_alias('Windows Mozilla');
-  $agent->post($uri, {
-    cit_fmt        => $EXPORT_FORMAT,
-    export_all_byn => $EXPORT_BTN_TEXT . $member->{name},
-  });
-
-  write_file(
-    qq{data/$member->{gid}.bib},
-    {binmode => ':utf8'},
-    $agent->content
+      push @{$pub_ref->{$member}->{publications}}, {
+        url     => $cite_url,
+        title   => get_title($dom),
+        authors => get_authors($dom),
+        date    => get_pub_date($dom),
+        journal => get_journal($dom),
+        volume  => get_volume($dom),
+        issue   => get_issue($dom),
+        };
+    }
   );
+
+  print Dumper $pub_ref;
+  last;
 }
+
+sub get_agent {
+  my $agent = Mojo::UserAgent->new();
+  $agent->name(q{Mozilla/5.0});
+  return $agent;
+}
+
+sub _get_node_text {
+  my ($dom, $path) = @_;
+  my $node = $dom->at($css_path_ref->{$path});
+  return $node ? $node->text : q{};
+}
+
+sub get_title {
+  my ($dom) = @_;
+  my $node  = $dom->at($css_path_ref->{title});
+
+  if (not $node) {
+    $node = $dom->at($css_path_ref->{title_alt});
+  }
+
+  return $node->text();
+}
+
+sub get_authors  { return _get_node_text(shift, q{authors});  }
+sub get_pub_date { return _get_node_text(shift, q{pub_date}); }
+sub get_journal  { return _get_node_text(shift, q{journal});  }
+sub get_volume   { return _get_node_text(shift, q{volume});   }
+sub get_issue    { return _get_node_text(shift, q{issue});    }
