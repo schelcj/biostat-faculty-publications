@@ -10,7 +10,7 @@ use File::Slurp qw(write_file);
 use Data::Dumper;
 
 my $publications     = [];
-my $publication_json = q{publications.json};
+my $publication_json = qq{$Bin/../public/js/publications.json};
 my @faculty          = LoadFile(qq{$Bin/../config/faculty.yml});
 my $base_url         = q{http://scholar.google.com};
 my $cite_list_url    = $base_url . q{/citations?hl=en&pagesize=100&user=};
