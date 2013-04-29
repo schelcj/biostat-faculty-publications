@@ -1,20 +1,39 @@
 #!/usr/bin/env perl
 
+# TODO - possibly include a count of publications in the faculty member data
+#        and then only get the urls for all pages if that number is close to
+#        a next page threshold
+
 use FindBin qw($Bin);
 use lib qq($Bin/../lib/perl5);
 use Modern::Perl;
 use YAML qw(LoadFile);
 use Mojo::UserAgent;
 use JSON;
-use File::Slurp qw(write_file);
+use File::Slurp qw(write_file read_file);
+use File::Spec;
+use Getopt::Compact;
 use Data::Dumper;
 
-my $publications     = [];
-my $publication_json = qq{$Bin/../public/js/publications.json};
-my @faculty          = LoadFile(qq{$Bin/../config/faculty.yml});
-my $base_url         = q{http://scholar.google.com};
-my $cite_list_url    = q{/citations?hl=en&pagesize=100&user=};
-my $agent_ref        = {
+## no tidy
+my $opts = Getopt::Compact->new(
+  struct => [
+    [[qw(u urls)],         q{Get urls for all results},                 q{:s}],
+    [[qw(p publications)], q{Get publication data},                     q{:s}],
+    [[qw(s sleep)],        q{Time, in seconds, to sleep between page fetches}],
+  ]
+)->opts();
+## use tidy
+
+my $max_sleep = $opts->{sleep} || 1000;
+my $public_dir  = File::Spec->join($Bin,        q{../public});
+my $json_dir    = File::Spec->join($public_dir, q{json});
+my $faculty_yml = File::Spec->join($Bin,        q{../config/faculty.yml});
+my @faculty     = LoadFile($faculty_yml);
+my $base_url    = q{http://scholar.google.com};
+my $cite_list_url = q{/citations?hl=en&pagesize=100&user=};
+my $json_opts     = {pretty => 1, utf8 => 1};
+my $agent_ref     = {
   'Windows IE 6'    => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)',
   'Windows Mozilla' => 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.4b) Gecko/20030516 Mozilla Firebird/0.6',
   'Mac Safari'      => 'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-us) AppleWebKit/85 (KHTML, like Gecko) Safari/85',
@@ -36,60 +55,66 @@ my $css_path_ref = {
   next_lnk  => q{a.cit-dark-link},
 };
 
-for my $member (@faculty) {
-  my $pub_ref = {};
+if ($opts->{urls}) {
+  for my $member (@faculty) {
+    my %publications = ();
+    @publications{keys %{$member}} = values %{$member};
+    $publications{urls} = get_urls_for_faculty_member($member);
 
-  $pub_ref->{$member->{name}}->{urls} = get_urls_for_faculty_member($member);
-
-=cut
-  $fac_pubs->res->dom->find($css_path_ref->{item})->each(
-    sub {
-      my $cite_url = $base_url . $_->attrs('href');
-      my $ua       = get_agent();
-      my $dom      = $ua->get($cite_url)->res->dom();
-
-      push @{$pub_ref->{$member->{name}}->{publications}}, {
-        url     => $cite_url,
-        title   => get_title($dom) || get_title_alt($dom),
-        authors => get_authors($dom),
-        date    => get_pub_date($dom),
-        journal => get_journal($dom),
-        volume  => get_volume($dom),
-        issue   => get_issue($dom),
-        pages   => get_pages($dom),
-        };
-    }
-  );
-=cut
-
-  push @{$publications}, $pub_ref;
+    save_publications($member->{gid}, \%publications);
+  }
 }
 
-write_file($publication_json, to_json($publications, {pretty => 1, utf8 => 1}));
+if ($opts->{publications}) {
+  for my $member (@faculty) {
+    my $fac_json     = get_faculty_json($member->{gid});
+    my $publications = read_file(from_json($fac_json));
 
-sub get_agent {
-  my $agent   = Mojo::UserAgent->new();
-  my @aliases = keys %{$agent_ref};
-  my $alias   = $aliases[rand(int(scalar @aliases))];
+    for my $url (@{$publications->{urls}}) {
+      my $page = get_page($url);
+      $publications->{publications} = get_publications($page);
+    }
 
-  $agent->name($agent_ref->{$alias});
+    save_publications($member->{gid}, $publications);
+  }
+}
 
-  return $agent;
+sub get_faculty_json {
+  my ($gid) = @_;
+  return File::Spec->join($json_dir, $gid . q{.json});
+}
+
+sub save_publications {
+  my ($gid, $publications) = @_;
+  my $fac_json = get_faculty_json($gid);
+  write_file($fac_json, to_json($publications, $json_opts));
+  return;
+}
+
+sub get_publications {
+  my ($page) = @_;
+
+  return {
+    title   => get_title($page) || get_title_alt($page),
+    authors => get_authors($page),
+    date    => get_pub_date($page),
+    journal => get_journal($page),
+    volume  => get_volume($page),
+    issue   => get_issue($page),
+    pages   => get_pages($page),
+  };
 }
 
 sub get_urls_for_faculty_member {
   my ($member) = @_;
-  my $urls     = [];
+  my $urls = [];
 
   push @{$urls}, $cite_list_url . $member->{gid};
 
   {
-    sleep 5;
-
     my $url   = $base_url . $urls->[-1];
-    my $agent = get_agent();
-
-    my $links = $agent->get($url)->res->dom->find($css_path_ref->{next_lnk});
+    my $page  = get_page($url);
+    my $links = $page->res->dom->find($css_path_ref->{next_lnk});
     last if not $links;
 
     my $lnk = $links->first(sub {$_->text =~ /^Next/});
@@ -102,10 +127,11 @@ sub get_urls_for_faculty_member {
   return $urls;
 }
 
-sub _get_node_text {
-  my ($dom, $path) = @_;
-  my $node = $dom->at($css_path_ref->{$path});
-  return $node ? $node->text : q{};
+sub get_page {
+  my ($url) = @_;
+  my $agent = _get_agent();
+  sleep int(rand($max_sleep));
+  return $agent->get($url);
 }
 
 sub get_title     {return _get_node_text(shift, q{title});}
@@ -116,3 +142,19 @@ sub get_journal   {return _get_node_text(shift, q{journal});}
 sub get_volume    {return _get_node_text(shift, q{volume});}
 sub get_issue     {return _get_node_text(shift, q{issue});}
 sub get_pages     {return _get_node_text(shift, q{pages});}
+
+sub _get_agent {
+  my $agent   = Mojo::UserAgent->new();
+  my @aliases = keys %{$agent_ref};
+  my $alias   = $aliases[rand(int(scalar @aliases))];
+
+  $agent->name($agent_ref->{$alias});
+
+  return $agent;
+}
+
+sub _get_node_text {
+  my ($page, $path) = @_;
+  my $node = $page->res->dom->at($css_path_ref->{$path});
+  return $node ? $node->text : q{};
+}
