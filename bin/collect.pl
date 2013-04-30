@@ -1,7 +1,5 @@
 #!/usr/bin/env perl
 
-# TODO - do not pull results for publications we already have
-
 use FindBin qw($Bin);
 use lib qq($Bin/../lib/perl5);
 use Modern::Perl;
