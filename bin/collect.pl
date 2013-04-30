@@ -1,8 +1,6 @@
 #!/usr/bin/env perl
 
-# TODO - possibly include a count of publications in the faculty member data
-#        and then only get the urls for all pages if that number is close to
-#        a next page threshold
+# TODO - do not pull results for publications we already have
 
 use FindBin qw($Bin);
 use lib qq($Bin/../lib/perl5);
@@ -13,19 +11,21 @@ use JSON;
 use File::Slurp qw(write_file read_file);
 use File::Spec;
 use Getopt::Compact;
+use List::MoreUtils qw(none);
 use Data::Dumper;
 
 ## no tidy
 my $opts = Getopt::Compact->new(
+  modes  => [qw(verbose debug)],
   struct => [
-    [[qw(u urls)],         q{Get urls for all results},                 q{:s}],
-    [[qw(p publications)], q{Get publication data},                     q{:s}],
+    [[qw(u urls)],         q{Get urls for all results}],
+    [[qw(p publications)], q{Get publication data}],
     [[qw(s sleep)],        q{Time, in seconds, to sleep between page fetches}],
   ]
 )->opts();
 ## use tidy
 
-my $max_sleep = $opts->{sleep} || 1000;
+my $max_sleep = $opts->{sleep} || 120;
 my $public_dir  = File::Spec->join($Bin,        q{../public});
 my $json_dir    = File::Spec->join($public_dir, q{json});
 my $faculty_yml = File::Spec->join($Bin,        q{../config/faculty.yml});
@@ -67,12 +67,17 @@ if ($opts->{urls}) {
 
 if ($opts->{publications}) {
   for my $member (@faculty) {
+    verbose("Processing publications for $member->{name}");
+
     my $fac_json     = get_faculty_json($member->{gid});
-    my $publications = read_file(from_json($fac_json));
+    my $publications = from_json(read_file($fac_json));
 
     for my $url (@{$publications->{urls}}) {
-      my $page = get_page($url);
-      $publications->{publications} = get_publications($page);
+      $url = $base_url . $url;
+      verbose("Fetch publications list on $url");
+
+      my $page    = get_page($url);
+      get_publications($page, $publications->{publications});
     }
 
     save_publications($member->{gid}, $publications);
@@ -87,22 +92,43 @@ sub get_faculty_json {
 sub save_publications {
   my ($gid, $publications) = @_;
   my $fac_json = get_faculty_json($gid);
+  debug("Writing publications to $fac_json");
   write_file($fac_json, to_json($publications, $json_opts));
   return;
 }
 
 sub get_publications {
-  my ($page) = @_;
+  my ($page, $publications) = @_;
 
-  return {
-    title   => get_title($page) || get_title_alt($page),
-    authors => get_authors($page),
-    date    => get_pub_date($page),
-    journal => get_journal($page),
-    volume  => get_volume($page),
-    issue   => get_issue($page),
-    pages   => get_pages($page),
-  };
+  $page->res->dom->find($css_path_ref->{item})->each(
+    sub {
+      my $title = $_->text;
+      my $href  = $_->attrs('href');
+      my $url   = $base_url . $href;
+
+      if (none {$_->{title} eq $title} @{$publications}) {
+        my $page = get_page($url);
+
+        debug("Parsing publication on $url");
+
+        my $pub_ref = {
+          url     => $url,
+          title   => get_title($page) || get_title_alt($page),
+          date    => get_pub_date($page),
+          journal => get_journal($page),
+          volume  => get_volume($page),
+          issue   => get_issue($page),
+          pages   => get_pages($page),
+        };
+
+        verbose("Found publication $pub_ref->{title}");
+
+        push @{$publications}, $pub_ref;
+      }
+    }
+  );
+
+  return $publications;
 }
 
 sub get_urls_for_faculty_member {
@@ -130,7 +156,10 @@ sub get_urls_for_faculty_member {
 sub get_page {
   my ($url) = @_;
   my $agent = _get_agent();
-  sleep int(rand($max_sleep));
+  my $sleep = int(rand($max_sleep));
+
+  debug("Delaying for $sleep seconds before next GET");
+  sleep $sleep;
   return $agent->get($url);
 }
 
@@ -148,6 +177,8 @@ sub _get_agent {
   my @aliases = keys %{$agent_ref};
   my $alias   = $aliases[rand(int(scalar @aliases))];
 
+  debug("UserAgent set to $alias");
+
   $agent->name($agent_ref->{$alias});
 
   return $agent;
@@ -158,3 +189,6 @@ sub _get_node_text {
   my $node = $page->res->dom->at($css_path_ref->{$path});
   return $node ? $node->text : q{};
 }
+
+sub debug   { say "[DEBUG] $_[0]" if $opts->{debug}; }
+sub verbose { say "[INFO] $_[0]" if $opts->{verbose}; }
