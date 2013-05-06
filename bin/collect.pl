@@ -3,7 +3,6 @@
 use FindBin qw($Bin);
 use lib qq($Bin/../lib/perl5);
 use Modern::Perl;
-use YAML qw(LoadFile);
 use Mojo::UserAgent;
 use JSON;
 use File::Slurp qw(write_file read_file);
@@ -24,11 +23,11 @@ my $opts = Getopt::Compact->new(
 ## use tidy
 
 my $max_sleep = $opts->{sleep} || 120;
-my $public_dir  = File::Spec->join($Bin,        q{../public});
-my $json_dir    = File::Spec->join($public_dir, q{json});
-my $faculty_yml = File::Spec->join($Bin,        q{../config/faculty.yml});
-my @faculty     = LoadFile($faculty_yml);
-my $base_url    = q{http://scholar.google.com};
+my $public_dir   = File::Spec->join($Bin,        q{../public});
+my $json_dir     = File::Spec->join($public_dir, q{json});
+my $faculty_json = File::Spec->join($json_dir,   q{faculty.json});
+my $faculty       = from_json(read_file($faculty_json), {utf8 => 1});
+my $base_url      = q{http://scholar.google.com};
 my $cite_list_url = q{/citations?hl=en&pagesize=100&user=};
 my $json_opts     = {pretty => 1, utf8 => 1};
 my $agent_ref     = {
@@ -54,7 +53,7 @@ my $css_path_ref = {
 };
 
 if ($opts->{urls}) {
-  for my $member (@faculty) {
+  for my $member (@{$faculty}) {
     my %publications = ();
     @publications{keys %{$member}} = values %{$member};
     $publications{urls} = get_urls_for_faculty_member($member);
@@ -64,32 +63,36 @@ if ($opts->{urls}) {
 }
 
 if ($opts->{publications}) {
-  for my $member (@faculty) {
+  for my $member (@{$faculty}) {
     verbose("Processing publications for $member->{name}");
 
-    my $fac_json     = get_faculty_json($member->{gid});
-    my $publications = from_json(read_file($fac_json));
+    my $fac_json = get_faculty_json($member->{gid});
 
-    for my $url (@{$publications->{urls}}) {
-      $url = $base_url . $url;
+    for my $url (@{$fac_json->{urls}}) {
       verbose("Fetch publications list on $url");
 
-      my $page    = get_page($url);
-      get_publications($page, $publications->{publications});
+      my $page = get_page($url);
+      get_publications($page, $fac_json->{publications});
     }
 
-    save_publications($member->{gid}, $publications);
+    save_publications($member->{gid}, $fac_json);
   }
 }
 
+sub get_faculty_json_file {
+  return File::Spec->join($json_dir, shift . q{.json});
+}
+
 sub get_faculty_json {
-  my ($gid) = @_;
-  return File::Spec->join($json_dir, $gid . q{.json});
+  my ($gid)    = @_;
+  my $file     = get_faculty_json_file($gid);
+  my $contents = read_file($file);
+  return from_json($contents, {utf8 => 1});
 }
 
 sub save_publications {
   my ($gid, $publications) = @_;
-  my $fac_json = get_faculty_json($gid);
+  my $fac_json = get_faculty_json_file($gid);
   debug("Writing publications to $fac_json");
   write_file($fac_json, to_json($publications, $json_opts));
   return;
@@ -102,15 +105,16 @@ sub get_publications {
     sub {
       my $title = $_->text;
       my $href  = $_->attrs('href');
-      my $url   = $base_url . $href;
 
       if (none {$_->{title} eq $title} @{$publications}) {
-        my $page = get_page($url);
+        verbose("Found new publication '$title'");
 
-        debug("Parsing publication on $url");
+        my $page = get_page($href);
+
+        debug("Parsing publication on $href");
 
         my $pub_ref = {
-          url     => $url,
+          url     => $href,
           title   => get_title($page) || get_title_alt($page),
           date    => get_pub_date($page),
           journal => get_journal($page),
@@ -118,8 +122,6 @@ sub get_publications {
           issue   => get_issue($page),
           pages   => get_pages($page),
         };
-
-        verbose("Found publication $pub_ref->{title}");
 
         push @{$publications}, $pub_ref;
       }
@@ -136,8 +138,7 @@ sub get_urls_for_faculty_member {
   push @{$urls}, $cite_list_url . $member->{gid};
 
   {
-    my $url   = $base_url . $urls->[-1];
-    my $page  = get_page($url);
+    my $page  = get_page($urls->[-1]);
     my $links = $page->res->dom->find($css_path_ref->{next_lnk});
     last if not $links;
 
@@ -155,10 +156,12 @@ sub get_page {
   my ($url) = @_;
   my $agent = _get_agent();
   my $sleep = int(rand($max_sleep));
+  my $uri   = URI->new_abs($url, $base_url);
 
   debug("Delaying for $sleep seconds before next GET");
   sleep $sleep;
-  return $agent->get($url);
+
+  return $agent->get($uri->as_string);
 }
 
 sub get_title     {return _get_node_text(shift, q{title});}
@@ -188,5 +191,5 @@ sub _get_node_text {
   return $node ? $node->text : q{};
 }
 
-sub debug   { say "[DEBUG] $_[0]" if $opts->{debug}; }
-sub verbose { say "[INFO] $_[0]" if $opts->{verbose}; }
+sub debug   {say "[DEBUG] $_[0]" if $opts->{debug};}
+sub verbose {say "[INFO] $_[0]"  if $opts->{verbose};}
