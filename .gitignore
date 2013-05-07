@@ -1,13 +1,2 @@
-*.bib
 *.json
-lib
-public/faculty.html
-man
-bin/config_data
-bin/instmodsh
-bin/json_pp
-bin/json_xs
-bin/mech-dump
-bin/xsubpp
-bin/zipdetails
-.modulebuildrc
+*.db
