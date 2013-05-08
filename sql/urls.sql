@@ -2,7 +2,6 @@ create table urls (
   id         INTEGER UNIQUE PRIMARY KEY,
   faculty_id INTEGER NOT NULL,
   url        TEXT NOT NULL,
-  created_at DATE NOT NULL,
 
   foreign key(faculty_id) references faculty(id)
 );

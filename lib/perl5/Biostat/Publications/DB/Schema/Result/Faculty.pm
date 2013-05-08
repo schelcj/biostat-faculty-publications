@@ -39,11 +39,6 @@ __PACKAGE__->table("faculty");
   data_type: 'text'
   is_nullable: 0
 
-=head2 created_at
-
-  data_type: 'date'
-  is_nullable: 0
-
 =cut
 
 __PACKAGE__->add_columns(
@@ -53,8 +48,6 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 0 },
   "gid",
   { data_type => "text", is_nullable => 0 },
-  "created_at",
-  { data_type => "date", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -128,9 +121,11 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-07 15:53:11
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:biDEoHZiVlIgfVsRwN2oDA
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-08 09:42:01
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:3x78ZlkC8UEGKDhM1hZ5kQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
+
+__PACKAGE__->add_columns(created_at => {set_on_create => 1});
 1;

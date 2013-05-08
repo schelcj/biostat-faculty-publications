@@ -1,5 +1,5 @@
 PWD := $(shell pwd)
-DB_FILE=$(PWD)/publications.db
+DB_FILE=$(PWD)/db/publications.db
 DB_SCHEMA_DIR=$(PWD)/lib/perl5
 
 all: collect parse install

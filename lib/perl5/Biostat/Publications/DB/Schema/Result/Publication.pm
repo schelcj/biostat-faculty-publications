@@ -45,7 +45,7 @@ __PACKAGE__->table("publications");
   data_type: 'text'
   is_nullable: 1
 
-=head2 pub_date
+=head2 date
 
   data_type: 'text'
   is_nullable: 1
@@ -81,7 +81,7 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 0 },
   "title",
   { data_type => "text", is_nullable => 1 },
-  "pub_date",
+  "date",
   { data_type => "text", is_nullable => 1 },
   "journal",
   { data_type => "text", is_nullable => 1 },
@@ -123,8 +123,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-07 15:53:11
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:XrScBPLBs/eTLJcirEhUTQ
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-08 10:15:14
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:IZj6DfmQabbE2KWyTnYv8A
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

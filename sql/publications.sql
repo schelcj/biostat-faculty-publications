@@ -3,7 +3,7 @@ create table publications (
   faculty_id  INTEGER NOT NULL,
   url         TEXT NOT NULL,
   title       TEXT,
-  pub_date    TEXT,
+  date        TEXT,
   journal     TEXT,
   volume      TEXT,
   issue       TEXT,
