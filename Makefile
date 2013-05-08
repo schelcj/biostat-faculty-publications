@@ -5,7 +5,7 @@ DB_SCHEMA_DIR=$(PWD)/lib/perl5
 all: collect build install
 
 collect:
-	bin/collect.pl
+	bin/collect.pl -p -v -d > log/$(shell date '+%Y%m%d').log
 
 build:
 	bin/build.pl
