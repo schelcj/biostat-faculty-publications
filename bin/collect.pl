@@ -4,12 +4,14 @@ use FindBin qw($Bin);
 use lib qq($Bin/../lib/perl5);
 use Modern::Perl;
 use Mojo::UserAgent;
-use JSON;
 use File::Slurp qw(write_file read_file);
 use File::Spec;
 use Getopt::Compact;
 use List::MoreUtils qw(none);
-use Data::Dumper;
+use Biostat::Publications::DB::Schema;
+use English qw(-no_match_vars);
+
+$OUTPUT_AUTOFLUSH = 1;
 
 ## no tidy
 my $opts = Getopt::Compact->new(
@@ -22,14 +24,10 @@ my $opts = Getopt::Compact->new(
 )->opts();
 ## use tidy
 
-my $max_sleep = $opts->{sleep} || 120;
-my $public_dir   = File::Spec->join($Bin,        q{../public});
-my $json_dir     = File::Spec->join($public_dir, q{json});
-my $faculty_json = File::Spec->join($json_dir,   q{faculty.json});
-my $faculty       = from_json(read_file($faculty_json), {utf8 => 1});
+my $schema        = Biostat::Publications::DB::Schema->connect('dbi:SQLite:db/publications.db');
+my $max_sleep     = $opts->{sleep} || 120;
 my $base_url      = q{http://scholar.google.com};
 my $cite_list_url = q{/citations?hl=en&pagesize=100&user=};
-my $json_opts     = {pretty => 1, utf8 => 1};
 my $agent_ref     = {
   'Windows IE 6'    => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)',
   'Windows Mozilla' => 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.4b) Gecko/20030516 Mozilla Firebird/0.6',
@@ -53,89 +51,70 @@ my $css_path_ref = {
 };
 
 if ($opts->{urls}) {
-  for my $member (@{$faculty}) {
-    my %publications = ();
-    @publications{keys %{$member}} = values %{$member};
-    $publications{urls} = get_urls_for_faculty_member($member);
+  for my $member ($schema->resultset('Faculty')->all()) {
+    verbose('Getting urls for ' . $member->name);
+    my $urls = get_urls_for_faculty_member($member->gid);
 
-    save_publications($member->{gid}, \%publications);
+    for my $url (@{$urls}) {
+      my $url = $member->urls({url => $url});
+
+      if (not $url) {
+        verbose('Found new url for ' . $member->name);
+        $member->add_to_urls({url => $url});
+      }
+    }
   }
 }
 
 if ($opts->{publications}) {
-  for my $member (@{$faculty}) {
-    verbose("Processing publications for $member->{name}");
-
-    my $fac_json = get_faculty_json($member->{gid});
-
-    for my $url (@{$fac_json->{urls}}) {
-      verbose("Fetch publications list on $url");
-
-      my $page = get_page($url);
-      get_publications($page, $fac_json->{publications});
-    }
-
-    save_publications($member->{gid}, $fac_json);
+  for my $member ($schema->resultset('Faculty')->all()) {
+    verbose('Processing publications for ' . $member->name);
+    record_publications_for_member($member);
   }
 }
 
-sub get_faculty_json_file {
-  return File::Spec->join($json_dir, shift . q{.json});
-}
+sub record_publications_for_member {
+  my ($member) = @_;
+  my $publications = [];
 
-sub get_faculty_json {
-  my ($gid)    = @_;
-  my $file     = get_faculty_json_file($gid);
-  my $contents = read_file($file);
-  return from_json($contents, {utf8 => 1});
-}
+  for my $url ($member->urls) {
+    verbose('Fetch publications list on ' . $url->url);
+    my $pub_page = get_page($url->url);
 
-sub save_publications {
-  my ($gid, $publications) = @_;
-  my $fac_json = get_faculty_json_file($gid);
-  debug("Writing publications to $fac_json");
-  write_file($fac_json, to_json($publications, $json_opts));
+    $pub_page->res->dom->find($css_path_ref->{item})->each(
+      sub {
+        my $title = $_->text;
+        my $href  = $_->attrs('href');
+
+        if (not $member->publications->find({title => $title})) {
+          my $page = get_page($href);
+          debug("Parsing publication on $href");
+
+          my $pub_ref = {
+            url     => $href,
+            title   => get_title($page) || get_title_alt($page),
+            date    => get_pub_date($page),
+            journal => get_journal($page),
+            volume  => get_volume($page),
+            issue   => get_issue($page),
+            pages   => get_pages($page),
+          };
+
+          verbose("Found new publication '$title'");
+          $member->add_to_publications($pub_ref);
+        }
+      }
+    );
+  }
+
   return;
 }
 
-sub get_publications {
-  my ($page, $publications) = @_;
-
-  $page->res->dom->find($css_path_ref->{item})->each(
-    sub {
-      my $title = $_->text;
-      my $href  = $_->attrs('href');
-
-      if (none {$_->{title} eq $title} @{$publications}) {
-        verbose("Found new publication '$title'");
-
-        my $page = get_page($href);
-
-        debug("Parsing publication on $href");
-
-        my $pub_ref = {
-          url     => $href,
-          title   => get_title($page) || get_title_alt($page),
-          date    => get_pub_date($page),
-          journal => get_journal($page),
-          volume  => get_volume($page),
-          issue   => get_issue($page),
-          pages   => get_pages($page),
-        };
-
-        push @{$publications}, $pub_ref;
-      }
-    }
-  );
-
-  return $publications;
-}
-
 sub get_urls_for_faculty_member {
-  my ($member) = @_;
+  my ($gid) = @_;
   my $urls = [];
 
-  push @{$urls}, $cite_list_url . $member->{gid};
+  push @{$urls}, $cite_list_url . $gid;
 
   {
     my $page  = get_page($urls->[-1]);
@@ -156,8 +135,9 @@ sub get_page {
   my ($url) = @_;
   my $agent = _get_agent();
   my $sleep = int(rand($max_sleep));
-  my $uri   = URI->new_abs($url, $base_url);
+  my $uri = URI->new_abs($url, $base_url);
 
+  verbose("Fetching $uri");
   debug("Delaying for $sleep seconds before next GET");
   sleep $sleep;
 
