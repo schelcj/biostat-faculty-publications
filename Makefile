@@ -2,13 +2,13 @@ PWD := $(shell pwd)
 DB_FILE=$(PWD)/db/publications.db
 DB_SCHEMA_DIR=$(PWD)/lib/perl5
 
-all: collect parse install
+all: collect build install
 
 collect:
 	bin/collect.pl
 
-parse:
-	bin/parse.pl
+build:
+	bin/build.pl
 
 install:
 	cp -r public/* /afs/umich.edu/group/s/sph/web/htdocs/biostat/publications
