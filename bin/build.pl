@@ -6,13 +6,14 @@ use Modern::Perl;
 use JSON;
 use Biostat::Publications::DB::Schema;
 use File::Slurp qw(write_file);
+use Text::Names qw(cleanName);
 
 my @HEADERS = (qw(title journal volume issue pages date));
 my $json    = q{public/js/faculty.json};
 my $faculty = [];
 my $schema  = Biostat::Publications::DB::Schema->connect('dbi:SQLite:db/publications.db');
 
-for my $member ($schema->resultset('Faculty')->all()) {
+for my $member (sort {cleanName($a->name) cmp cleanName($b->name)} $schema->resultset('Faculty')->all()) {
   my $publications = [];
 
   for my $pub ($member->publications) {
@@ -20,7 +21,7 @@ for my $member ($schema->resultset('Faculty')->all()) {
   }
 
   push @{$faculty}, {
-    name         => $member->name,
+    name         => cleanName($member->name),
     publications => $publications,
   };
 }
