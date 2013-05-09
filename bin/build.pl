@@ -7,6 +7,7 @@ use JSON;
 use Biostat::Publications::DB::Schema;
 use File::Slurp qw(write_file);
 
+my @HEADERS = (qw(title journal volume issue pages date));
 my $json    = q{public/js/faculty.json};
 my $faculty = [];
 my $schema  = Biostat::Publications::DB::Schema->connect('dbi:SQLite:db/publications.db');
@@ -15,7 +16,7 @@ for my $member ($schema->resultset('Faculty')->all()) {
   my $publications = [];
 
   for my $pub ($member->publications) {
-    push @{$publications}, [map {$pub->$_} $pub->columns];
+    push @{$publications}, [map {$pub->$_} @HEADERS];
   }
 
   push @{$faculty}, {
@@ -24,4 +25,4 @@ for my $member ($schema->resultset('Faculty')->all()) {
   };
 }
 
-write_file($json, to_json($faculty, {utf8 => 1}));
+write_file($json, to_json($faculty, {utf8 => 1, pretty => 1}));
