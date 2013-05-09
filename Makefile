@@ -13,6 +13,9 @@ build:
 install:
 	cp -r public/* /afs/umich.edu/group/s/sph/web/htdocs/biostat/publications
 
+add:
+	@bin/addfac.pl
+
 build_db:
 	@rm -f $(DB_FILE)
 	@sqlite3 $(DB_FILE) < $(PWD)/sql/faculty.sql
