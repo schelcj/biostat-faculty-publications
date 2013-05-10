@@ -20,6 +20,7 @@ my $opts = Getopt::Compact->new(
     [[qw(u urls)],         q{Get urls for all results}],
     [[qw(p publications)], q{Get publication data}],
     [[qw(s sleep)],        q{Time, in seconds, to sleep between page fetches}],
+    [[qw(update)],         q{Force updating any publications found}],
   ]
 )->opts();
 ## use tidy
@@ -86,20 +87,16 @@ sub record_publications_for_member {
         my $title = $_->text;
         my $href  = $_->attrs('href');
 
-        if (not $member->publications->find({title => $title})) {
-          my $page = get_page($href);
-          debug("Parsing publication on $href");
+        if ($opts->{update}) {
+          my $pub_ref = get_publication($href);
+          verbose("Updating $title");
+          $schema->resultset('Publication')->update_or_create(
+            {$pub_ref, faculty_id => $member->id},
+            {key => 'faculty_id'}
+          );
 
-          my $pub_ref = {
-            url     => $href,
-            title   => get_title($page) || get_title_alt($page),
-            date    => get_pub_date($page),
-            journal => get_journal($page),
-            volume  => get_volume($page),
-            issue   => get_issue($page),
-            pages   => get_pages($page),
-          };
-
+        } elsif (not $member->publications->find({title => $title})) {
+          my $pub_ref = get_publication($href);
           verbose("Found new publication '$title'");
           $member->add_to_publications($pub_ref);
         }
@@ -142,6 +139,24 @@ sub get_page {
   sleep $sleep;
 
   return $agent->get($uri->as_string);
+}
+
+sub get_publication {
+  my ($href) = @_;
+  my $page   = get_page($href);
+
+  debug("Parsing publication on $href");
+
+  return {
+    url     => $href,
+    title   => get_title($page) || get_title_alt($page),
+    date    => get_pub_date($page),
+    journal => get_journal($page),
+    volume  => get_volume($page),
+    issue   => get_issue($page),
+    pages   => get_pages($page),
+    authors => get_authors($page),
+  };
 }
 
 sub get_title     {return _get_node_text(shift, q{title});}

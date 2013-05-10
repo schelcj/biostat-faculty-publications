@@ -16,6 +16,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
             'aaSorting': [[ 6, "desc" ]],
             'aoColumns': [
               {'sTitle': 'Title'  },
+              {'sTitle': 'Authors'},
               {'sTitle': 'Journal'},
               {'sTitle': 'Volume' },
               {'sTitle': 'Issue'  },

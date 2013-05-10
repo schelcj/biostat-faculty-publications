@@ -21,6 +21,7 @@ build_db:
 	@sqlite3 $(DB_FILE) < $(PWD)/sql/faculty.sql
 	@sqlite3 $(DB_FILE) < $(PWD)/sql/urls.sql
 	@sqlite3 $(DB_FILE) < $(PWD)/sql/publications.sql
+	@sqlite3 $(DB_FILE) < $(PWD)/sql/add_authors.sql
 
 rebuild_schema:
 	@perl -MDBIx::Class::Schema::Loader=make_schema_at,dump_to_dir:$(DB_SCHEMA_DIR) -e 'make_schema_at("Biostat::Publications::DB::Schema", {debug => 1}, [ "dbi:SQLite:$(DB_FILE)" ])'

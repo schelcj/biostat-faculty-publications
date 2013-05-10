@@ -8,7 +8,7 @@ use Biostat::Publications::DB::Schema;
 use File::Slurp qw(write_file);
 use Text::Names qw(cleanName);
 
-my @HEADERS = (qw(title journal volume issue pages date));
+my @HEADERS = (qw(title authors journal volume issue pages date));
 my $json    = q{public/js/faculty.json};
 my $faculty = [];
 my $schema  = Biostat::Publications::DB::Schema->connect('dbi:SQLite:db/publications.db');
