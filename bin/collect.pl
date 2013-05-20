@@ -87,15 +87,17 @@ sub record_publications_for_member {
         my $title = $_->text;
         my $href  = $_->attrs('href');
 
-        if ($opts->{update}) {
-          my $pub_ref = get_publication($href);
-          verbose("Updating $title");
-          $schema->resultset('Publication')->update_or_create(
-            {$pub_ref, faculty_id => $member->id},
-            {key => 'faculty_id'}
-          );
+        my $publication = $member->publications->find({title => $title});
 
-        } elsif (not $member->publications->find({title => $title})) {
+        if ($publication) {
+          if ($opts->{update}) {
+            my $pub_ref = get_publication($href);
+            verbose("Updating $title");
+            $publication->update($pub_ref);
+          } else {
+            verbose('Found existing publication and not updating');
+          }
+        } else {
           my $pub_ref = get_publication($href);
           verbose("Found new publication '$title'");
           $member->add_to_publications($pub_ref);

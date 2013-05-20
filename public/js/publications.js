@@ -49,10 +49,12 @@ if (typeof(jQuery) != 'undefined') { (function($) {
                 $('ul#faculty_list').show('fast');
                 $('#return').empty();
                 $('#publication_conatiner').hide('fast');
+                $('#fac_name').empty();
               });
             })
           );
 
+          $('#fac_name').empty().append('for ' + e.name);
           $('ul#faculty_list').hide('fast');
         });
 

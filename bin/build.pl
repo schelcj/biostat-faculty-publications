@@ -7,6 +7,7 @@ use JSON;
 use Biostat::Publications::DB::Schema;
 use File::Slurp qw(write_file);
 use Text::Names qw(cleanName);
+use Encode;
 
 my @HEADERS = (qw(title authors journal volume issue pages date));
 my $json    = q{public/js/faculty.json};
@@ -17,11 +18,12 @@ for my $member (sort {cleanName($a->name) cmp cleanName($b->name)} $schema->resu
   my $publications = [];
 
   for my $pub ($member->publications) {
-    push @{$publications}, [map {$pub->$_} @HEADERS];
+    push @{$publications}, [map {decode('utf8', $pub->$_)} @HEADERS];
   }
 
   push @{$faculty}, {
-    name         => cleanName($member->name),
+    name         => decode('utf8', $member->name),
+    clean_name   => cleanName(decode('utf8', $member->name)),
     publications => $publications,
   };
 }
