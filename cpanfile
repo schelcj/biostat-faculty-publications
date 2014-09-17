@@ -5,3 +5,6 @@ requires 'Mojo::UserAgent';
 requires 'File::Slurp';
 requires 'Getopt::Compact';
 requires 'Modern::Perl';
+requires 'DBD::SQLite';
+requires 'Text::Names';
+requires 'YAML';
