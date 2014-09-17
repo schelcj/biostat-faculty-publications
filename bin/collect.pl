@@ -177,7 +177,7 @@ sub _get_agent {
 
   debug("UserAgent set to $alias");
 
-  $agent->name($agent_ref->{$alias});
+  $agent->transactor->name($agent_ref->{$alias});
 
   return $agent;
 }
