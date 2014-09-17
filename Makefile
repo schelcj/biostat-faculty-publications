@@ -25,3 +25,10 @@ build_db:
 
 rebuild_schema:
 	@perl -MDBIx::Class::Schema::Loader=make_schema_at,dump_to_dir:$(DB_SCHEMA_DIR) -e 'make_schema_at("Biostat::Publications::DB::Schema", {debug => 1}, [ "dbi:SQLite:$(DB_FILE)" ])'
+
+setup:
+	mkdir db/ log/
+
+install-cpan-deps:
+		cpanm --without-feature=test --installdeps $(PWD)
+
