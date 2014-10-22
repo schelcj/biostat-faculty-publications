@@ -32,5 +32,7 @@ setup:
 	mkdir db/ log/
 
 install-cpan-deps:
-		cpanm --without-feature=test --installdeps $(PWD)
+	carton install
 
+get-publications:
+	carton exec 'bin/get_publications.pl'

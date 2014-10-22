@@ -8,3 +8,4 @@ requires 'Modern::Perl';
 requires 'DBD::SQLite';
 requires 'Text::Names';
 requires 'YAML';
+requires 'JSON::Any';
