@@ -1,0 +1,144 @@
+<html>
+  <head>
+    <title>Faculty Publications</title>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css" />
+    <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="/css/sph.css" />
+    <link rel="stylesheet" type="text/css" href="/biostat/css/stylesheet.css" />
+    <link rel="stylesheet" type="text/css" href="/css/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" href="/css/mobile.css" media="handheld" />
+    <link rel="stylesheet" type="text/css" href="/biostat/css/biostat.css" />
+    <link rel="stylesheet" type="text/css" href="css/magnific-popup.css" />
+    <!-- XXX - try select2 to clean up the select dialogs -->
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
+    <script src="js/magnific-popup.js"></script>
+
+    <style type="text/css">
+      #faculty {
+        margin-bottom: 25px;
+      }
+
+      #publications {
+        border-collapse: separate;
+        border-spacing: 10px;
+      }
+
+      #publications tbody td {
+        border: 0px solid #000000 !important;
+      }
+
+      #publications tbody td a:link {
+        text-decoration: none !important;
+      }
+
+      .white-popup {
+        position: relative;
+        background: #FFF;
+        padding: 20px;
+        width: auto;
+        max-width: 200px;
+        margin: 20px auto;
+        text-align: center;
+      }
+    </style>
+
+    <script type="text/javascript">
+      if (typeof(jQuery) != 'undefined') { (function($) {
+        $(function() {
+          $.getJSON('js/faculty.json', function(data) {
+            $('#faculty').append($('<option />', {text: '----'}));
+
+            $(data).each(function(i,e) {
+              $('#faculty').append($('<option />', {id: e, text: e}));
+            });
+          });
+
+          $('#faculty').change(function() {
+            $.getJSON('js/' + $('#faculty').val() + '.json', function(data) {
+              var publications = new Array;
+
+              $(data.publications.article).each(function(index, article) {
+                var pub = [
+                  article.title,
+                  article.scopusEID,
+                  article.timescited,
+                  article.authors
+                ];
+
+                publications.push(pub);
+              });
+
+              $('#publications').dataTable({
+                'bAutoWidth':  false,
+                'bProcessing': false,
+                'bDestroy':    true,
+                'aaData':      publications,
+                'pageLength':  25,
+                'aoColumns': [
+                  {'sTitle': 'Title'},
+                ],
+                'aoColumnDefs': [{
+                  'aTargets': ['_all'],
+                  'fnCreatedCell': function (nTd, sData, oData, iRow, iCol) {
+                    $(nTd).attr('title', sData);
+                    $(nTd).css('white-space', 'nowrap');
+                    $(nTd).css('text-overflow', 'ellipsis');
+                    $(nTd).css('max-width', '250px');
+                    $(nTd).css('overflow', 'hidden');
+
+                    if (iCol == 0) {
+                      $('<a />', {
+                        href:   '#',
+                        text:   oData[0],
+                        target: '_new',
+                        id: 'scopuseid-' + oData[1]
+                        }).appendTo($(nTd).empty()).click(function() {
+                          // $('#pub').appendTo($('<div />', {text: 'hello world'}));
+                          $('#pub').html('<b>hello world</b>');
+                          $('#pub').magnificPopup({type: 'inline'});
+
+                          /*
+                          $('#pub').magnificPopup({
+                            src: $('<b>hello world</b>'),
+                            type: 'inline'
+                          });
+                          */
+
+                          return false;
+                        });
+                    }
+                  }
+                }]
+              });
+            });
+          });
+        });
+      })(jQuery)};
+    </script>
+  </head>
+  <body>
+    <!--#include virtual="/inc/header.inc" -->
+
+    <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+      <tr valign="top">
+        <td id="left">
+          <!--#include virtual="/biostat/nav.html" -->
+          <!--#include virtual="/biostat/facts.html" -->
+        </td>
+
+        <td id="content"><a name="content"></a>
+          <label for="faculty">Select a Faculty Member:</label>
+          <select id="faculty"></select>
+          <hr />
+          <table id="publications"></table>
+          <div id="pub" class="white-popup mfp-inline"></div>
+        </td>
+      </tr>
+    </table>
+
+    <!--#include virtual="/inc/footer.html" -->
+  </body>
+</html>
