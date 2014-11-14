@@ -59,16 +59,20 @@
           $('#faculty').change(function() {
             $.getJSON('js/' + $('#faculty').val() + '.json', function(data) {
               var publications = new Array;
+              var publication_map = {};
 
               $(data.publications.article).each(function(index, article) {
-                var pub = [
+                publications.push([
                   article.title,
                   article.scopusEID,
                   article.timescited,
                   article.authors
-                ];
+                ]);
 
-                publications.push(pub);
+                publication_map[article.scopusEID] = {
+                  title: article.title,
+                  cited: article.timescited
+                };
               });
 
               $('#publications').dataTable({
@@ -93,25 +97,31 @@
                       $('<a />', {
                         href:   '#',
                         text:   oData[0],
-                        target: '_new',
-                        id: 'scopuseid-' + oData[1]
-                        }).appendTo($(nTd).empty()).click(function() {
-                          // $('#pub').appendTo($('<div />', {text: 'hello world'}));
-                          $('#pub').html('<b>hello world</b>');
-                          $('#pub').magnificPopup({type: 'inline'});
-
-                          /*
-                          $('#pub').magnificPopup({
-                            src: $('<b>hello world</b>'),
-                            type: 'inline'
-                          });
-                          */
-
-                          return false;
-                        });
+                        id:     'scopuseid-' + oData[1],
+                        class:  'publication'
+                        }).appendTo($(nTd).empty());
                     }
-                  }
-                }]
+                  },
+                }],
+                'initComplete': function(settings, json) {
+                  $('.publication').magnificPopup({
+                    type: 'inline',
+                    closeBtnInside: true,
+                    inline: {
+                      markup: $('#publication_container').html()
+                    },
+                    callbacks: {
+                      open: function() {
+                        var eid = $(this.st.el).attr('id').slice(10);
+                        this.items = [publication_map[eid]];
+                        this.updateItemHTML();
+                      },
+                      elementParse: function() {
+                        console.info(this.src);
+                      }
+                    }
+                  });
+                },
               });
             });
           });
@@ -134,7 +144,13 @@
           <select id="faculty"></select>
           <hr />
           <table id="publications"></table>
-          <div id="pub" class="white-popup mfp-inline"></div>
+          <div id="publication_container">
+            <div class="white-popup">
+              <div class="mfp-close"></div>
+              <h1 class="mfp-title"></h1>
+              <h3 class="mfp-cited"></h3>
+            </div>
+          </div>
         </td>
       </tr>
     </table>
