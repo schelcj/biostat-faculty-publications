@@ -1,6 +1,7 @@
 <html>
   <head>
     <title>Faculty Publications</title>
+
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css" />
     <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="/css/sph.css" />
@@ -9,14 +10,20 @@
     <link rel="stylesheet" type="text/css" href="/css/mobile.css" media="handheld" />
     <link rel="stylesheet" type="text/css" href="/biostat/css/biostat.css" />
     <link rel="stylesheet" type="text/css" href="css/magnific-popup.css" />
-    <!-- XXX - try select2 to clean up the select dialogs -->
+    <link rel="stylesheet" type="text/css" href="css/select2.css" />
+    <link rel="stylesheet" type="text/css" href="css/select2.css" />
 
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
     <script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
     <script src="js/magnific-popup.js"></script>
+    <script src="js/select2.min.js"></script>
 
     <style type="text/css">
+      .hide {
+        display: none;
+      }
+
       #faculty {
         margin-bottom: 25px;
       }
@@ -26,7 +33,7 @@
         border-spacing: 10px;
       }
 
-      #publications tbody td {
+            #publications tbody td {
         border: 0px solid #000000 !important;
       }
 
@@ -39,7 +46,7 @@
         background: #FFF;
         padding: 20px;
         width: auto;
-        max-width: 200px;
+        max-width: 500px;
         margin: 20px auto;
         text-align: center;
       }
@@ -47,16 +54,63 @@
       .white-popup div {
         color: #666666;
       }
+
+      .white-popup h1 {
+        color: #666666;
+        border-bottom: 1px solid #666666;
+      }
+
+      .white-popup > .pub-title {
+        color: #00274c !important;
+        font-weight: bold;
+        border-bottom: 1px solid #00274c;
+        margin-bottom: 2px;
+        font-size: large;
+        padding-bottom: 2px;
+      }
+
+      .white-popup > .pub-body {
+        text-align: left !important;
+      }
+
+      .white-popup > .pub-body > .pub-author {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      .white-popup > .pub-body > table {
+        width: 100%;
+        margin: 20px 0px 2px 0px;
+        color: #666666 !important;
+        text-align: left;
+      }
+
+      .white-popup > .pub-body > table > thead tr th {
+        border-bottom: 1px solid #666666 !important;
+      }
+
+      .white-popup > .pub-body > table th {
+        font-weight: bold;
+        font-size: medium;
+      }
+
+      .white-popup > .pub-body > table tbody td {
+        font-size: small;
+        font-color: #666666;
+      }
     </style>
 
     <script type="text/javascript">
       if (typeof(jQuery) != 'undefined') { (function($) {
         $(function() {
           $.getJSON('js/faculty.json', function(data) {
-            $('#faculty').append($('<option />', {text: '----'}));
-
             $(data).each(function(i,e) {
               $('#faculty').append($('<option />', {id: e, text: e}));
+            });
+
+            $('#faculty').select2({
+              placeholder: 'Select a faculty member'
             });
           });
 
@@ -74,8 +128,13 @@
                 ]);
 
                 publication_map[article.scopusEID] = {
-                  title: article.title,
-                  cited: article.timescited
+                  title:   article.title,
+                  cited:   article.timescited,
+                  author:  article.author,
+                  journal: article.journalTitle,
+                  year:    article.year,
+                  url:     article.selfUrl,
+                  pmid:    article.pmid
                 };
               });
 
@@ -120,6 +179,9 @@
                         this.items = [publication_map[eid]];
                         this.index = 0;
                         this.updateItemHTML();
+                      },
+                      markupParse: function(template, values, item) {
+                        $(template).find('a#pmid').attr('href', item.data.url);
                       }
                     }
                   });
@@ -142,15 +204,35 @@
         </td>
 
         <td id="content"><a name="content"></a>
-          <label for="faculty">Select a Faculty Member:</label>
-          <select id="faculty"></select>
+          <select id="faculty">
+            <option></option>
+          </select>
+
           <hr />
+
           <table id="publications"></table>
-          <div id="publication_container">
+
+          <div id="publication_container" class="hide">
             <div class="white-popup">
               <div class="mfp-close"></div>
-              <div class="mfp-title"></div>
-              <div class="mfp-cited"></div>
+              <div class="mfp-title pub-title"></div>
+              <div class="pub-body">
+                <div class="mfp-author pub-author"></div>
+                <table cellspacing="0" cellborder="0">
+                  <thead>
+                    <th>Year</th>
+                    <th>PubMed</th>
+                    <th>Journal</th>
+                    <th>Times Cited</th>
+                  </thead>
+                  <tbody>
+                    <td class="mfp-year"></td>
+                    <td><a id="pmid" href="#" target="_new"><span class="mfp-pmid"></span></a></td>
+                    <td class="mfp-journal"></td>
+                    <td class="mfp-cited"></td>
+                  <tbody>
+                </table>
+              </div>
             </div>
           </div>
         </td>
