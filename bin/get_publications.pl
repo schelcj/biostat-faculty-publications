@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+use lib qq($ENV{HOME}/src/biostat/lib/perl5);
 use FindBin qw($Bin);
 use Modern::Perl;
 use Mojo::UserAgent;
@@ -7,6 +8,7 @@ use URI;
 use URI::QueryParam;
 use JSON::Any;
 use File::Slurp qw(write_file);
+use Biostat::LDAP qw(get_umod_realname);
 use Data::Dumper;
 
 my $FACULTY_URL = q{http://www.sph.umich.edu/iscr/faculty/dept.cfm?deptID=1};
@@ -18,8 +20,8 @@ say 'Saving uniqnames';
 write_file(qq{$Bin/../public/json/faculty.json}, JSON::Any->to_json(\@uniqnames));
 
 for my $name (@uniqnames) {
-  say "Fetching publications for $name";
-  get_faculty_publications($name);
+  say "Fetching publications for $name->{uniqname}";
+  get_faculty_publications($name->{uniqname});
 }
 
 sub get_faculty_uniqnames {
@@ -30,8 +32,11 @@ sub get_faculty_uniqnames {
 
   $agent->get($url)->res->dom($css)->each(
     sub {
-      my $uri = URI->new(shift->attr('href'));
-      push @names, $uri->query_param('uniqname');
+      my $uri      = URI->new(shift->attr('href'));
+      my $uniqname = $uri->query_param('uniqname');
+      my $realname = get_umod_realname($uniqname);
+
+      push @names, {uniqname => $uniqname, realname => $realname};
     }
   );
 
