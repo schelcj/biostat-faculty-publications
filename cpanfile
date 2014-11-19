@@ -9,3 +9,5 @@ requires 'DBD::SQLite';
 requires 'Text::Names';
 requires 'YAML';
 requires 'JSON::Any';
+requires 'Readonly';
+requires 'Net::LDAP';
