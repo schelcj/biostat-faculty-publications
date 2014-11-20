@@ -1,0 +1,89 @@
+.hide {
+  display: none;
+}
+
+#faculty {
+  margin-bottom: 25px;
+}
+
+#publications {
+  border-collapse: separate;
+  border-spacing: 10px;
+}
+
+#publications tbody td {
+  border: 0px solid #000000 !important;
+}
+
+#publications tbody td a:link {
+  text-decoration: none !important;
+}
+
+#publications tbody td .pub-desc {
+  padding-left: 10px;
+  font-size: smaller;
+  color: #242424;
+}
+
+#publications tbody td .pub-desc-title {
+  color: #666666;
+}
+
+.white-popup {
+  position: relative;
+  background: #FFF;
+  padding: 20px;
+  width: auto;
+  max-width: 500px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.white-popup div {
+  color: #666666;
+}
+
+.white-popup h1 {
+  color: #666666;
+  border-bottom: 1px solid #666666;
+}
+
+.white-popup > .pub-title {
+  color: #00274c !important;
+  font-weight: bold;
+  border-bottom: 1px solid #00274c;
+  margin-bottom: 2px;
+  font-size: large;
+  padding-bottom: 2px;
+}
+
+.white-popup > .pub-body {
+  text-align: left !important;
+}
+
+.white-popup > .pub-body > .pub-author {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.white-popup > .pub-body > table {
+  width: 100%;
+  margin: 20px 0px 2px 0px;
+  color: #666666 !important;
+  text-align: left;
+}
+
+.white-popup > .pub-body > table > thead tr th {
+  border-bottom: 1px solid #666666 !important;
+}
+
+.white-popup > .pub-body > table th {
+  font-weight: bold;
+  font-size: medium;
+}
+
+.white-popup > .pub-body > table tbody td {
+  font-size: small;
+  font-color: #666666;
+}

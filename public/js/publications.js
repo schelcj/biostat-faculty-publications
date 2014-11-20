@@ -1,64 +1,107 @@
 if (typeof(jQuery) != 'undefined') { (function($) {
-  $(document).ready(function() {
-    var title_colspan = '4';
-
-    $.getJSON('js/faculty.json', function(data) {
+  $(function() {
+    $.getJSON('json/faculty.json', function(data) {
       $(data).each(function(i,e) {
-        var fac_li = $('<li />').append($('<a />', {href: '#'}).text(e.name));
+        $('#faculty').append($('<option />', {id: e.uniqname, text: e.realname}));
+      });
 
-        $(fac_li).click(function() {
-          $('#publication_conatiner').show('fast');
-          $('table#publications').dataTable({
-            'bAutoWidth':  false,
-            'bProcessing': false,
-            'bDestroy':    true,
-            'aaData':      e.publications,
-            'aaSorting': [[ 6, "desc" ]],
-            'aoColumns': [
-              {'sTitle': 'Title'  },
-              {'sTitle': 'Authors'},
-              {'sTitle': 'Journal'},
-              {'sTitle': 'Volume' },
-              {'sTitle': 'Issue'  },
-              {'sTitle': 'Pages'  },
-              {'sTitle': 'Date'   },
-            ],
-            'aoColumnDefs': [{
-              'aTargets':      ['_all'],
-              'fnCreatedCell': function (nTd, sData, oData, iRow, iCol) {
-                $(nTd).attr('title', sData);
+      $('#faculty').select2({
+        placeholder: 'Select a faculty member'
+      });
+    });
 
-                if (iCol == 0) {
-                  $(nTd).attr('colspan', title_colspan);
-                  $('<a />', {
-                    href:   'http://www.ncbi.nlm.nih.gov/pubmed?term=' + sData + '[Title]',
-                    text:   sData,
-                    target: '_new'
-                  }).appendTo($(nTd).empty());
-                }
-              }
-            }],
-            'fnHeaderCallback': function (nHead, aData, iStart, iEnd, aiDisplay) {
-              $(nHead).find('th').first().attr('colspan', title_colspan);
-            }
-          }).show('fast');
+    $('#faculty').change(function() {
+      var uniqname = $('select#faculty option:selected').attr('id');
 
-          $('#return').append(
-            $('<a />', {href: '#', text: 'Return to faculty list'}).click(function() {
-              $('table#publications').hide('fast', function() {
-                $('ul#faculty_list').show('fast');
-                $('#return').empty();
-                $('#publication_conatiner').hide('fast');
-                $('#fac_name').empty();
-              });
-            })
-          );
+      $.getJSON('json/' + uniqname + '.json', function(data) {
+        var publications    = new Array;
+        var publication_map = new Object;
 
-          $('#fac_name').empty().append('for ' + e.name);
-          $('ul#faculty_list').hide('fast');
+        $(data.publications.article).each(function(index, article) {
+          publications.push([
+            article.title,
+            article.timescited,
+            article.scopusEID,
+            article.author,
+            article.year,
+            article.journalTitle,
+            article.journalVolume,
+            article.pages
+          ]);
+
+          publication_map[article.scopusEID] = {
+            title:   article.title,
+            cited:   article.timescited,
+            author:  article.author,
+            journal: article.journalTitle,
+            year:    article.year,
+            url:     article.pubmedURL,
+            pmid:    article.pmid
+          };
         });
 
-        $('ul#faculty_list').append($(fac_li));
+        $('#publications').dataTable({
+          'AutoWidth':  false,
+          'processing': false,
+          'destroy':    true,
+          'data':      publications,
+          'pageLength':  25,
+          'order':       [[ 1, "desc" ]],
+          'columns': [
+            {'sTitle': 'Title'     },
+            {'sTitle': 'Citations' },
+            {'sTitle': 'Scopus EID'},
+            {'sTitle': 'Authors'   },
+            {'sTitle': 'Year'      },
+            {'sTitle': 'Journal'   },
+            {'sTitle': 'Volume'    },
+          ],
+          'columnDefs': [{
+            'targets':    [ 2, 3, 4, 5, 6 ],
+            'visible':    false,
+            'searchable': true
+            },{
+            'targets': [0],
+            'createdCell': function (nTd, sData, oData, iRow, iCol) {
+              var authors = oData[3].split(';');
+
+              $('<a />', {
+                href:   '#',
+                text:   oData[0],
+                id:     'scopuseid-' + oData[2],
+                class:  'publication'
+                }).appendTo($(nTd).empty());
+
+              $(nTd).append(
+                  $('<div />', {class: "pub-desc"})
+                  .append('<div><span class="pub-desc-title">First Author:</span> ' + authors[0] + '</div>')
+                  .append('<div><span class="pub-desc-title">Journal:</span> ' + oData[5] + ' (volume: ' + oData[6] + ' pages: ' + oData[7] + ')</div>')
+                  .append('<div><span class="pub-desc-title">Year:</span> ' + oData[4] + '</div>')
+              );
+            },
+          }],
+          'drawCallback': function(settings, json) {
+            $('.publication').magnificPopup({
+              type: 'inline',
+              closeBtnInside: true,
+              inline: {
+                markup: $('#publication_container').html()
+              },
+              callbacks: {
+                open: function() {
+                  var eid = $(this.st.el).attr('id').slice(10);
+                  this.items = [publication_map[eid]];
+                  this.index = 0;
+                  this.updateItemHTML();
+                },
+                markupParse: function(template, values, item) {
+                  $(template).find('a#pmid').attr('href', item.data.url);
+                  $(template).find('.pub-author').attr('title', item.data.author);
+                }
+              }
+            });
+          },
+        });
       });
     });
   });
