@@ -87,3 +87,20 @@
   font-size: small;
   font-color: #666666;
 }
+
+#pub-summary {
+  margin: 20px 0px;
+}
+
+#pub-summary > fieldset {
+  border: 1px solid #666666;
+  font-weight: normal !important;
+}
+
+#pub-summary > fieldset > legend {
+  font-weight: bold;
+}
+
+#pub-summary > fieldset p {
+  margin: 0px 0px;
+}

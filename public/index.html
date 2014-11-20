@@ -18,6 +18,7 @@
     <script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
     <script src="js/magnific-popup.js"></script>
     <script src="js/select2.min.js"></script>
+    <script src="js/jsrender.min.js"></script>
     <script src="js/publications.js"></script>
   </head>
   <body>
@@ -35,8 +36,7 @@
             <option></option>
           </select>
 
-          <hr />
-
+          <div id="pub-summary"></div>
           <table id="publications"></table>
 
           <div id="publication_container" class="hide">
@@ -62,6 +62,23 @@
               </div>
             </div>
           </div>
+
+          <script id="publication_title_template" type="text/x-jsrender">
+            <div class="pub-desc">
+              <div><span class="pub-desc-title">First Author: </span>{{>author}}</div>
+              <div><span class="pub-desc-title">Journal: </span>{{>journal}} (volume: {{>volume}} pages: {{>pages}})</div>
+              <div><span class="pub-desc-title">Year: </span>{{>year}}</div>
+            </div>
+          </script>
+
+          <script id="publication_summary_template" type="text/x-jsrender">
+            <fieldset>
+              <legend>Summary</legend>
+              <p>Most common co-authors: foo, bar, baz</p>
+              <p>Most common Journals: baz, bar, foo</p>
+            </fieldset>
+          </script>
+
         </td>
       </tr>
     </table>

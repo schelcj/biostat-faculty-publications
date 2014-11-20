@@ -1,3 +1,23 @@
+function get_top_five(obj) {
+  var sorted = new Array;
+
+  Object.keys(obj).sort(function(a, b) {
+    if (obj[a] > obj[b])
+      return -1;
+
+    if (obj[a] < obj[b])
+      return 1;
+
+    return 0;
+  }).map(function(v, i) {
+    var new_obj = new Object;
+    new_obj[v] = obj[v];
+    sorted.push(new_obj);
+  });
+
+  return sorted.slice(0, 5);
+}
+
 if (typeof(jQuery) != 'undefined') { (function($) {
   $(function() {
     $.getJSON('json/faculty.json', function(data) {
@@ -6,7 +26,8 @@ if (typeof(jQuery) != 'undefined') { (function($) {
       });
 
       $('#faculty').select2({
-        placeholder: 'Select a faculty member'
+        placeholder: 'Select a faculty member',
+        width: 'resolve',
       });
     });
 
@@ -16,6 +37,8 @@ if (typeof(jQuery) != 'undefined') { (function($) {
       $.getJSON('json/' + uniqname + '.json', function(data) {
         var publications    = new Array;
         var publication_map = new Object;
+        var co_authors      = new Object;
+        var journals        = new Object;
 
         $(data.publications.article).each(function(index, article) {
           publications.push([
@@ -38,7 +61,24 @@ if (typeof(jQuery) != 'undefined') { (function($) {
             url:     article.pubmedURL,
             pmid:    article.pmid
           };
+
+          var c = isNaN(journals[article.journalTitle]) ? 0 : journals[article.journalTitle];
+          c++;
+          journals[article.journalTitle] = c;
+
+          var authors = article.author.split(';');
+          for (var author in authors) {
+            var count = isNaN(co_authors[authors[author]]) ? 0 : co_authors[authors[author]];
+            count++;
+            co_authors[authors[author]] = count;
+          }
         });
+
+        // TODO summary code goes here
+        $('#pub-summary').append();
+
+        console.log(get_top_five(journals));
+        console.log(get_top_five(co_authors));
 
         $('#publications').dataTable({
           'AutoWidth':  false,
@@ -48,13 +88,13 @@ if (typeof(jQuery) != 'undefined') { (function($) {
           'pageLength':  25,
           'order':       [[ 1, "desc" ]],
           'columns': [
-            {'sTitle': 'Title'     },
-            {'sTitle': 'Citations' },
-            {'sTitle': 'Scopus EID'},
-            {'sTitle': 'Authors'   },
-            {'sTitle': 'Year'      },
-            {'sTitle': 'Journal'   },
-            {'sTitle': 'Volume'    },
+            {'title': 'Title'     },
+            {'title': 'Citations' },
+            {'title': 'Scopus EID'},
+            {'title': 'Authors'   },
+            {'title': 'Year'      },
+            {'title': 'Journal'   },
+            {'title': 'Volume'    },
           ],
           'columnDefs': [{
             'targets':    [ 2, 3, 4, 5, 6 ],
@@ -72,12 +112,13 @@ if (typeof(jQuery) != 'undefined') { (function($) {
                 class:  'publication'
                 }).appendTo($(nTd).empty());
 
-              $(nTd).append(
-                  $('<div />', {class: "pub-desc"})
-                  .append('<div><span class="pub-desc-title">First Author:</span> ' + authors[0] + '</div>')
-                  .append('<div><span class="pub-desc-title">Journal:</span> ' + oData[5] + ' (volume: ' + oData[6] + ' pages: ' + oData[7] + ')</div>')
-                  .append('<div><span class="pub-desc-title">Year:</span> ' + oData[4] + '</div>')
-              );
+              $(nTd).append($('#publication_title_template').render([{
+                'author':  authors[0],
+                'journal': oData[5],
+                'volume':  oData[6],
+                'pages':   oData[7],
+                'year':    oData[4]
+              }]));
             },
           }],
           'drawCallback': function(settings, json) {
