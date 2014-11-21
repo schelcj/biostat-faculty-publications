@@ -80,11 +80,8 @@ if (typeof(jQuery) != 'undefined') { (function($) {
           }
         });
 
-        // TODO summary code goes here
         var top_co_authors = get_top_five(co_authors);
         var top_journals   = get_top_five(journals);
-
-        console.log(top_co_authors);
 
         $('#pub-summary').removeClass('hide');
         $('#pub-summary #co-authors ul').empty().append($('#publication_summary_template').render(top_co_authors));
