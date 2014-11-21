@@ -29,27 +29,31 @@ my $faculty = JSON::Any->from_json(read_file(qq{$json_dir/faculty.json}));
 $agent->transactor->name($alias);
 
 for my $member (@{$faculty}) {
+  say qq(Retrieving abstracts for $member->{realname});
   my $pubs = JSON::Any->from_json(read_file(qq($json_dir/$member->{uniqname}.json)));
 
-  for my $i (0 .. $pubs->{publications}->{count}) {
-    my $abstract = $EMPTY;
-    my $article  = $pubs->{publications}->{article}->[$i];
+  for my $article (@{$pubs->{publications}->{article}}) {
+    if ($article->{pmid}) {
+      my $abstract_json = qq($json_dir/abstracts/$article->{pmid}.json);
 
-    unless ($article->{pmid}) {
+      if (-e $abstract_json) {
+        my $cache = JSON::Any->from_json(read_file($abstract_json));
+        next if $cache->{abstract};
+      }
+
       my $url     = sprintf $pubmed_url, $article->{pmid};
       my $content = decode_entities($agent->get($url)->res->body);
       my $temp    = File::Temp->new();
 
       write_file($temp->filename, $content);
 
-      my $parser = XML::XPath->new(filename => $temp->filename);
-      my $nodes = $parser->find($xpath);
+      my $parser   = XML::XPath->new(filename => $temp->filename);
+      my $nodes    = $parser->find($xpath);
+      my $abstract = join($EMPTY, map {$_->string_value} $nodes->get_nodelist);
 
-      $abstract = join($EMPTY, map {$_->string_value} $nodes->get_nodelist);
+      say qq(\tFound abstract for $article->{pmid});
+
+      write_file($abstract_json, JSON::Any->to_json({abstract => $abstract}));
     }
-
-    $pubs->{publications}->{article}->[$i]->{abstract} = $abstract;
   }
-
-  write_file(qq{$json_dir/$member->{uniqname}.json.new}, JSON::Any->to_json($pubs));
 }
