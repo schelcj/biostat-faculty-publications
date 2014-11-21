@@ -11,3 +11,4 @@ requires 'YAML';
 requires 'JSON::Any';
 requires 'Readonly';
 requires 'Net::LDAP';
+requires 'XML::XPath';

@@ -36,3 +36,6 @@ install-cpan-deps:
 
 get-publications:
 	carton exec 'bin/get_publications.pl'
+
+get-abstracts:
+	carton exec 'bin/get_abstracts.pl'

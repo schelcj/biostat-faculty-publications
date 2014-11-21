@@ -1889,6 +1889,55 @@ DISTRIBUTIONS
       Fcntl 0
       URI 1.10
       perl 5.008001
+  XML-Parser-2.41
+    pathname: T/TO/TODDR/XML-Parser-2.41.tar.gz
+    provides:
+      XML::Parser 2.41
+      XML::Parser::Expat 2.41
+      XML::Parser::Style::Debug undef
+      XML::Parser::Style::Objects undef
+      XML::Parser::Style::Stream undef
+      XML::Parser::Style::Subs undef
+      XML::Parser::Style::Tree undef
+    requirements:
+      ExtUtils::MakeMaker 0
+      LWP 0
+      perl 5.00405
+  XML-XPath-1.13
+    pathname: M/MS/MSERGEANT/XML-XPath-1.13.tar.gz
+    provides:
+      XML::XPath 1.13
+      XML::XPath::Boolean undef
+      XML::XPath::Builder undef
+      XML::XPath::Expr undef
+      XML::XPath::Function undef
+      XML::XPath::Literal undef
+      XML::XPath::LocationPath undef
+      XML::XPath::Node undef
+      XML::XPath::Node::Attribute undef
+      XML::XPath::Node::AttributeImpl undef
+      XML::XPath::Node::Comment undef
+      XML::XPath::Node::CommentImpl undef
+      XML::XPath::Node::Element undef
+      XML::XPath::Node::ElementImpl undef
+      XML::XPath::Node::Namespace undef
+      XML::XPath::Node::NamespaceImpl undef
+      XML::XPath::Node::PI undef
+      XML::XPath::Node::PIImpl undef
+      XML::XPath::Node::Text undef
+      XML::XPath::Node::TextImpl undef
+      XML::XPath::NodeImpl undef
+      XML::XPath::NodeSet undef
+      XML::XPath::Number undef
+      XML::XPath::Parser undef
+      XML::XPath::PerlSAX undef
+      XML::XPath::Root undef
+      XML::XPath::Step undef
+      XML::XPath::Variable undef
+      XML::XPath::XMLParser undef
+    requirements:
+      ExtUtils::MakeMaker 0
+      XML::Parser 2.23
   YAML-1.12
     pathname: I/IN/INGY/YAML-1.12.tar.gz
     provides:

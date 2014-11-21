@@ -1,0 +1,55 @@
+#!/usr/bin/env perl
+
+# Guidelines for pubmed API:
+#
+# In order not to overload the E-utility servers, NCBI recommends that
+# users post no more than three URL requests per second and limit large jobs
+# to either weekends or between 9:00 PM and 5:00 AM Eastern time during
+# weekdays.
+
+use FindBin qw($Bin);
+use Modern::Perl;
+use File::Slurp qw(read_file write_file);
+use JSON::Any;
+use Mojo::UserAgent;
+use HTML::Entities;
+use XML::XPath;
+use File::Temp;
+use Data::Dumper;
+
+my $EMPTY      = q{};
+my $alias      = q{Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36};
+my $pubmed_url = q{http://www.ncbi.nlm.nih.gov/pubmed/%d?report=xml&format=text};
+my $xpath      = q{//PubmedArticle/MedlineCitation/Article/Abstract/AbstractText};
+my $json_dir   = qq{$Bin/../public/json};
+
+my $agent   = Mojo::UserAgent->new();
+my $faculty = JSON::Any->from_json(read_file(qq{$json_dir/faculty.json}));
+
+$agent->transactor->name($alias);
+
+for my $member (@{$faculty}) {
+  my $pubs = JSON::Any->from_json(read_file(qq($json_dir/$member->{uniqname}.json)));
+
+  for my $i (0 .. $pubs->{publications}->{count}) {
+    my $abstract = $EMPTY;
+    my $article  = $pubs->{publications}->{article}->[$i];
+
+    unless ($article->{pmid}) {
+      my $url     = sprintf $pubmed_url, $article->{pmid};
+      my $content = decode_entities($agent->get($url)->res->body);
+      my $temp    = File::Temp->new();
+
+      write_file($temp->filename, $content);
+
+      my $parser = XML::XPath->new(filename => $temp->filename);
+      my $nodes = $parser->find($xpath);
+
+      $abstract = join($EMPTY, map {$_->string_value} $nodes->get_nodelist);
+    }
+
+    $pubs->{publications}->{article}->[$i]->{abstract} = $abstract;
+  }
+
+  write_file(qq{$json_dir/$member->{uniqname}.json.new}, JSON::Any->to_json($pubs));
+}
