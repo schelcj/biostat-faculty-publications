@@ -29,7 +29,7 @@ rebuild_schema:
 	@perl -MDBIx::Class::Schema::Loader=make_schema_at,dump_to_dir:$(DB_SCHEMA_DIR) -e 'make_schema_at("Biostat::Publications::DB::Schema", {debug => 1}, [ "dbi:SQLite:$(DB_FILE)" ])'
 
 setup:
-	mkdir db/ log/
+	mkdir db/ log/ public/json public/json/abstracts
 
 install-cpan-deps:
 	carton install
