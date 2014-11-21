@@ -1,5 +1,6 @@
 function get_top_five(obj) {
   var sorted = new Array;
+  var params = new Array;
 
   Object.keys(obj).sort(function(a, b) {
     if (obj[a] > obj[b])
@@ -15,7 +16,12 @@ function get_top_five(obj) {
     sorted.push(new_obj);
   });
 
-  return sorted.slice(0, 5);
+  sorted.slice(0, 5).map(function(v, i) {
+    var keys = Object.keys(v);
+    params.push({'name': keys[0]});
+  });
+
+  return params;
 }
 
 if (typeof(jQuery) != 'undefined') { (function($) {
@@ -66,7 +72,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
           c++;
           journals[article.journalTitle] = c;
 
-          var authors = article.author.split(';');
+          var authors = article.author.split('; ');
           for (var author in authors) {
             var count = isNaN(co_authors[authors[author]]) ? 0 : co_authors[authors[author]];
             count++;
@@ -75,10 +81,14 @@ if (typeof(jQuery) != 'undefined') { (function($) {
         });
 
         // TODO summary code goes here
-        $('#pub-summary').append();
+        var top_co_authors = get_top_five(co_authors);
+        var top_journals   = get_top_five(journals);
 
-        console.log(get_top_five(journals));
-        console.log(get_top_five(co_authors));
+        console.log(top_co_authors);
+
+        $('#pub-summary').removeClass('hide');
+        $('#pub-summary #co-authors ul').empty().append($('#publication_summary_template').render(top_co_authors));
+        $('#pub-summary #journals ul').empty().append($('#publication_summary_template').render(top_journals));
 
         $('#publications').dataTable({
           'AutoWidth':  false,

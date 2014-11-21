@@ -90,17 +90,22 @@
 
 #pub-summary {
   margin: 20px 0px;
+  float: left;
+  width: 100% !important;
 }
 
-#pub-summary > fieldset {
-  border: 1px solid #666666;
-  font-weight: normal !important;
+#pub-summary ul,
+#pub-summary h3 {
+  margin: 0px 0px !important;
+  text-align: left;
 }
 
-#pub-summary > fieldset > legend {
-  font-weight: bold;
-}
-
-#pub-summary > fieldset p {
-  margin: 0px 0px;
+#pub-summary #co-authors,
+#pub-summary #journals {
+  float: left;
+  margin: 0px 10px 0px 0px !important;
+  padding: 5px 5px;
+  border: 0px;
+  max-width: 50%;
+  overflow: hidden;
 }

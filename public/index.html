@@ -36,7 +36,20 @@
             <option></option>
           </select>
 
-          <div id="pub-summary"></div>
+          <div id="pub-summary" class="hide">
+            <div id="co-authors">
+              <h3>Top five most common co-authors</h3>
+              <ul>
+              </ul>
+            </div>
+
+            <div id="journals">
+              <h3>Top five most common journals</h3>
+              <ul>
+              </ul>
+            </div>
+          </div>
+
           <table id="publications"></table>
 
           <div id="publication_container" class="hide">
@@ -72,11 +85,7 @@
           </script>
 
           <script id="publication_summary_template" type="text/x-jsrender">
-            <fieldset>
-              <legend>Summary</legend>
-              <p>Most common co-authors: foo, bar, baz</p>
-              <p>Most common Journals: baz, bar, foo</p>
-            </fieldset>
+            <li>{{>name}}</li>
           </script>
 
         </td>
