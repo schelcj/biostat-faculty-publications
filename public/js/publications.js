@@ -40,7 +40,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
     $('#faculty').change(function() {
       var uniqname = $('select#faculty option:selected').attr('id');
 
-      $.getJSON('json/' + uniqname + '.json', function(data) {
+      $.getJSON('json/faculty/' + uniqname + '.json', function(data) {
         var publications    = new Array;
         var publication_map = new Object;
         var co_authors      = new Object;
@@ -65,7 +65,8 @@ if (typeof(jQuery) != 'undefined') { (function($) {
             journal: article.journalTitle,
             year:    article.year,
             url:     article.pubmedURL,
-            pmid:    article.pmid
+            pmid:    article.pmid,
+            abst:    ''
           };
 
           var c = isNaN(journals[article.journalTitle]) ? 0 : journals[article.journalTitle];
@@ -137,19 +138,47 @@ if (typeof(jQuery) != 'undefined') { (function($) {
               },
               callbacks: {
                 open: function() {
-                  var eid = $(this.st.el).attr('id').slice(10);
+                  var mfp         = this;
+                  var eid         = $(this.st.el).attr('id').slice(10);
+                  var publication = publication_map[eid];
 
-                  $.getJSON('json/abstracts/' + publication_map.pmid + '.json', function(data) {
-                    console.info(data);
+                  $.getJSON('json/abstracts/' + publication.pmid + '.json', function(data) {
+                    publication['abst'] = data.abstract;
+                  }).always(function() {
+                    mfp.items = [publication];
+                    mfp.index = 0;
+                    mfp.updateItemHTML();
                   });
-
-                  this.items = [publication_map[eid]];
-                  this.index = 0;
-                  this.updateItemHTML();
                 },
                 markupParse: function(template, values, item) {
+                  var authors          = item.data.author.split('; ');
+                  var author_container = $(template).find('.pub-author');
+
+                  var primary_authors   = authors.splice(0,10);
+                  var secondary_authors = authors.splice(10,authors.length);
+
+                  $(primary_authors).each(function(v,i) {
+                    $(author_container).append($('<span />').text(i)).append(', ');
+                  });
+
+                  if (secondary_authors.length > 0) {
+                   var secondary_author_container = $('<div />', {id: 'secondary_authors'});
+
+                    $(secondary_authors).each(function(v,i) {
+                      $(secondary_author_container).append($('<span />').text(i)).append(', ');
+                    });
+
+                    $(author_container).append(
+                      $('<a />', {href: '#', id: 'show_more_authors'})
+                      .text('More...')
+                      .click(function() {
+                        $(author_container).append(secondary_author_container);
+                        $(this).hide();
+                      })
+                    );
+                  }
+
                   $(template).find('a#pmid').attr('href', item.data.url);
-                  $(template).find('.pub-author').attr('title', item.data.author);
                 }
               }
             });

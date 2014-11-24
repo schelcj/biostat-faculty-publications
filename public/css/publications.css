@@ -36,35 +36,25 @@
   width: auto;
   max-width: 500px;
   margin: 20px auto;
-  text-align: center;
 }
 
 .white-popup div {
   color: #666666;
 }
 
-.white-popup h1 {
-  color: #666666;
-  border-bottom: 1px solid #666666;
-}
-
-.white-popup > .pub-title {
+.white-popup h1,
+.white-popup h3 {
   color: #00274c !important;
   font-weight: bold;
   border-bottom: 1px solid #00274c;
   margin-bottom: 2px;
   font-size: large;
   padding-bottom: 2px;
+  text-align: left !important;
 }
 
 .white-popup > .pub-body {
   text-align: left !important;
-}
-
-.white-popup > .pub-body > .pub-author {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
 
 .white-popup > .pub-body > table {
