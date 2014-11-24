@@ -55,5 +55,5 @@ sub get_faculty_publications {
   my $agent = Mojo::UserAgent->new();
   my $page  = $agent->get($url);
 
-  $page->res->content->asset->move_to(qq{$Bin/../public/json/$uniqname.json});
+  $page->res->content->asset->move_to(qq{$Bin/../public/json/faculty/$uniqname.json});
 }
