@@ -138,6 +138,11 @@ if (typeof(jQuery) != 'undefined') { (function($) {
               callbacks: {
                 open: function() {
                   var eid = $(this.st.el).attr('id').slice(10);
+
+                  $.getJSON('json/abstracts/' + publication_map.pmid + '.json', function(data) {
+                    console.info(data);
+                  });
+
                   this.items = [publication_map[eid]];
                   this.index = 0;
                   this.updateItemHTML();
