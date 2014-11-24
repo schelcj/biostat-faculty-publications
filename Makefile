@@ -1,7 +1,9 @@
 PWD := $(shell pwd)
 DB_FILE=$(PWD)/db/publications.db
 DB_SCHEMA_DIR=$(PWD)/lib/perl5
-SITE_DIR=/afs/umich.edu/group/s/sph/web/htdocs/biostat/publications
+DOC_ROOT=/afs/umich.edu/group/s/sph/web/htdocs/biostat
+SITE_DIR=$(DOC_ROOT)/publications
+DEV_SITE_DIR=$(DOC_ROOT)/dev/publications
 
 all: collect build install
 
@@ -12,8 +14,12 @@ build:
 	bin/build.pl
 
 install:
-	cp -r public/* $(SITE_DIR)
+	rsync -v -a --no-owner --no-group public/ $(SITE_DIR)/
 	chmod 755 $(SITE_DIR)/index.html
+
+install-dev:
+	rsync -v -a --no-owner --no-group public/ $(DEV_SITE_DIR)/
+	chmod 755 $(DEV_SITE_DIR)/index.html
 
 add:
 	@bin/addfac.pl
