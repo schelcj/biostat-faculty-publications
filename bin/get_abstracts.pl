@@ -15,7 +15,6 @@ use Mojo::UserAgent;
 use HTML::Entities;
 use XML::XPath;
 use File::Temp;
-use Data::Dumper;
 
 my $EMPTY      = q{};
 my $alias      = q{Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36};
@@ -29,17 +28,15 @@ my $faculty = JSON::Any->from_json(read_file(qq{$json_dir/faculty.json}));
 $agent->transactor->name($alias);
 
 for my $member (@{$faculty}) {
-  say qq(Retrieving abstracts for $member->{realname});
-  my $pubs = JSON::Any->from_json(read_file(qq($json_dir/$member->{uniqname}.json)));
+  say qq(Retrieving abstracts for $member->{uniqname});
+
+  my $pubs = JSON::Any->from_json(read_file(qq($json_dir/faculty/$member->{uniqname}.json)));
 
   for my $article (@{$pubs->{publications}->{article}}) {
     if ($article->{pmid}) {
       my $abstract_json = qq($json_dir/abstracts/$article->{pmid}.json);
 
-      if (-e $abstract_json) {
-        my $cache = JSON::Any->from_json(read_file($abstract_json));
-        next if $cache->{abstract};
-      }
+      next if -e $abstract_json;
 
       my $url     = sprintf $pubmed_url, $article->{pmid};
       my $content = decode_entities($agent->get($url)->res->body);
