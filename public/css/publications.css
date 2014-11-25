@@ -19,14 +19,23 @@
   text-decoration: none !important;
 }
 
+#publications tbody td a:visited {
+  color: #024794;
+}
+
 #publications tbody td .pub-desc {
   padding-left: 10px;
   font-size: smaller;
   color: #242424;
+  margin-top: 1%;
 }
 
 #publications tbody td .pub-desc-title {
   color: #666666;
+  min-width: 18%;
+  text-align: right;
+  margin-right: 1%;
+  display: inline-block;
 }
 
 .white-popup {
@@ -66,6 +75,7 @@
 
 .white-popup > .pub-body > table > thead tr th {
   border-bottom: 1px solid #666666 !important;
+  color: #00274c !important;
 }
 
 .white-popup > .pub-body > table th {
@@ -82,6 +92,17 @@
   margin: 20px 0px;
   float: left;
   width: 100% !important;
+  font-size: small;
+  background: #F4F4F4;
+  box-shadow: 1px 1px 3px rgba(0,0,0,.3);
+  padding-left: 5px;
+}
+
+#pub-summary div {
+  min-height: 150px !important;
+  min-width: 325px;
+  box-shadow: none !important;
+  background: none !important;
 }
 
 #pub-summary ul,
@@ -90,12 +111,21 @@
   text-align: left;
 }
 
-#pub-summary #co-authors,
-#pub-summary #journals {
+#pub-summary ul {
+  padding-right: 5px;
+  list-style: decimal;
+}
+
+#pub-summary h3 {
+  padding: 3px;
+  border-bottom: 1px solid #666666;
+  margin-bottom: 2px !important;
+}
+
+#pub-summary div {
   float: left;
-  margin: 0px 10px 0px 0px !important;
-  padding: 5px 5px;
-  border: 0px;
+  margin: 5px 10px 0px 0px !important;
+  padding: 0px !important;
+  border: 0px !important;
   max-width: 50%;
-  overflow: hidden;
 }
