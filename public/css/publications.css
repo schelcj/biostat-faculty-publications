@@ -3,6 +3,7 @@
 }
 
 #faculty {
+  width: 300px;
   margin-bottom: 25px;
 }
 
@@ -128,4 +129,10 @@
   padding: 0px !important;
   border: 0px !important;
   max-width: 50%;
+}
+
+#cloud {
+  margin: 10px 0px;
+  width: 500px;
+  height: 300px;
 }

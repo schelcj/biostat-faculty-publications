@@ -1,5 +1,36 @@
 if (typeof(jQuery) != 'undefined') { (function($) {
   $(function() {
+    var common_words = {
+      'is':    1,
+      'as':    1,
+      'an':    1,
+      'am':    1,
+      'so':    1,
+      'by':    1,
+      'to':    1,
+      'on':    1,
+      'us':    1,
+      'of':    1,
+      'in':    1,
+      'at':    1,
+      'do':    1,
+      'or':    1,
+      'ii':    1,
+      'iii':   1,
+      'not':   1,
+      'and':   1,
+      'are':   1,
+      'the':   1,
+      'for':   1,
+      'via':   1,
+      'its':   1,
+      'but':   1,
+      'with':  1,
+      'from':  1,
+      'into':  1,
+      'their': 1
+    };
+
     function get_top_five(obj) {
       var sorted = new Array;
       var params = new Array;
@@ -32,8 +63,9 @@ if (typeof(jQuery) != 'undefined') { (function($) {
       });
 
       $('#faculty').select2({
-        placeholder: 'Select a faculty member',
-        width: 'resolve',
+        placeholder:       'Select a faculty member',
+        width:             'resolve',
+        dropdownAutoWidth: true,
       });
     });
 
@@ -45,6 +77,8 @@ if (typeof(jQuery) != 'undefined') { (function($) {
         var publication_map = new Object;
         var co_authors      = new Object;
         var journals        = new Object;
+        var words           = new Object;
+        var word_cloud      = new Array;
 
         $(data.publications.article).each(function(index, article) {
           publications.push([
@@ -78,6 +112,61 @@ if (typeof(jQuery) != 'undefined') { (function($) {
             var count = isNaN(co_authors[authors[author]]) ? 0 : co_authors[authors[author]];
             count++;
             co_authors[authors[author]] = count;
+          }
+
+          article.title.split(' ').map(function(v, i) {
+            var word = v.toLowerCase();
+
+            if (v.length == 1)
+              return;
+
+            if ($.isNumeric(v) == true)
+              return;
+
+            if (isNaN(common_words[word]) == false)
+              return;
+
+            var starts_with_numbers = /^\d+/;
+            if (starts_with_numbers.test(word) == true)
+              return;
+
+            var starts_with_non_alpha = /^\W+/;
+            if (starts_with_non_alpha.test(word) == true)
+              return;
+
+            var starts_with_dio = /^doi:/;
+            if (starts_with_dio.test(word) == true)
+              return;
+
+            var contains_html = /<|>/;
+            if (contains_html.test(word) == true)
+              return;
+
+            var count = isNaN(words[word]) ? 0 : words[word];
+            count++;
+            words[word] = count;
+          });
+        });
+
+        Object.keys(words).map(function(v, i) {
+          if (words[v] == 1)
+            return;
+
+          word_cloud.push({
+            text: v,
+            weight: words[v],
+            link: {href: '#', class: 'cloud', title: v}
+          });
+        });
+
+        $('#cloud').empty().jQCloud(word_cloud, {
+          afterCloudRender: function() {
+            $('a.cloud').each(function(i, e) {
+              $(e).click(function() {
+                $('input[type=search]').val(this.text).focus().keyup();
+                $(this).preventDefault();
+              });
+            });
           }
         });
 
