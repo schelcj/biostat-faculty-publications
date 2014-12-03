@@ -71,6 +71,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
 
     $('#faculty').change(function() {
       var uniqname = $('select#faculty option:selected').attr('id');
+      $('#cloud').empty();
 
       $.getJSON('json/faculty/' + uniqname + '.json', function(data) {
         var publications    = new Array;
@@ -148,27 +149,33 @@ if (typeof(jQuery) != 'undefined') { (function($) {
           });
         });
 
-        Object.keys(words).map(function(v, i) {
-          if (words[v] == 1)
-            return;
+        Object.keys(words).sort(function(a, b) {
+          if (words[a] > words[b])
+            return -1;
 
+          if (words[a] < words[b])
+            return 1;
+
+          return 0;
+        }).splice(0, 50).map(function(v, i) {
           word_cloud.push({
             text: v,
             weight: words[v],
-            link: {href: '#', class: 'cloud', title: v}
+            link: {
+              href:  '#',
+              class: 'cloud',
+              title: v
+            },
+            handlers: {
+              click: function() {
+                $('input[type=search]').val(v).focus().keyup();
+                return false;
+              }
+            }
           });
         });
 
-        $('#cloud').empty().jQCloud(word_cloud, {
-          afterCloudRender: function() {
-            $('a.cloud').each(function(i, e) {
-              $(e).click(function() {
-                $('input[type=search]').val(this.text).focus().keyup();
-                $(this).preventDefault();
-              });
-            });
-          }
-        });
+        $('#cloud').empty().jQCloud(word_cloud);
 
         var top_co_authors = get_top_five(co_authors);
         var top_journals   = get_top_five(journals);
