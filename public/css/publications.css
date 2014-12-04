@@ -131,6 +131,11 @@
   max-width: 50%;
 }
 
+#pub-summary .summary-link {
+  text-decoration: none !important;
+  color: #024794;
+}
+
 #cloud {
   margin: 10px 0px;
   width: 500px;

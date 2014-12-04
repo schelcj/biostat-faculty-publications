@@ -186,6 +186,11 @@ if (typeof(jQuery) != 'undefined') { (function($) {
         $('#pub-summary #co-authors ul').empty().append($('#publication_summary_template').render(top_co_authors));
         $('#pub-summary #journals ul').empty().append($('#publication_summary_template').render(top_journals));
 
+        $('.summary-link').click(function() {
+          $('input[type=search]').val($(this).text()).focus().keyup();
+          return false;
+        });
+
         $('#publications').dataTable({
           'autoWidth':  false,
           'processing': false,
