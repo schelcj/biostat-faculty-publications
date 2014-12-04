@@ -10,7 +10,7 @@
 use FindBin qw($Bin);
 use Modern::Perl;
 use File::Slurp qw(read_file write_file);
-use JSON::Any;
+use JSON;
 use Mojo::UserAgent;
 use HTML::Entities;
 use XML::XPath;
@@ -21,16 +21,15 @@ my $alias      = q{Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, li
 my $pubmed_url = q{http://www.ncbi.nlm.nih.gov/pubmed/%d?report=xml&format=text};
 my $xpath      = q{//PubmedArticle/MedlineCitation/Article/Abstract/AbstractText};
 my $json_dir   = qq{$Bin/../public/json};
-
-my $agent   = Mojo::UserAgent->new();
-my $faculty = JSON::Any->from_json(read_file(qq{$json_dir/faculty.json}));
+my $agent      = Mojo::UserAgent->new();
+my $faculty    = from_json(read_file(qq{$json_dir/faculty.json}), {utf8 => 1});
 
 $agent->transactor->name($alias);
 
 for my $member (@{$faculty}) {
   say qq(Retrieving abstracts for $member->{uniqname});
 
-  my $pubs = JSON::Any->from_json(read_file(qq($json_dir/faculty/$member->{uniqname}.json)));
+  my $pubs = from_json(read_file(qq($json_dir/faculty/$member->{uniqname}.json)), {utf8 => 1});
 
   for my $article (@{$pubs->{publications}->{article}}) {
     if ($article->{pmid}) {
@@ -50,7 +49,7 @@ for my $member (@{$faculty}) {
 
       say qq(\tFound abstract for $article->{pmid});
 
-      write_file($abstract_json, JSON::Any->to_json({abstract => $abstract}));
+      write_file($abstract_json, to_json({abstract => $abstract}, {utf8 => 1, pretty => 1}));
     }
   }
 }
