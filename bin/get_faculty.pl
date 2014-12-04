@@ -23,6 +23,10 @@ $agent->get($faculty_url)->res->dom($css)->each(
     my $uniqname = $uri->query_param('uniqname');
     my $realname = get_umod_realname($uniqname);
 
+    if ($uniqname eq 'yili') {
+      $realname = 'Yi Li';
+    }
+
     push @uniqnames, {uniqname => $uniqname, realname => $realname, cleanname => cleanName($realname)};
   }
 );
