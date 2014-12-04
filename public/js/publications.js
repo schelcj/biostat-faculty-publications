@@ -59,7 +59,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
 
     $.getJSON('json/faculty.json?' + Date.now(), function(data) {
       $(data).each(function(i,e) {
-        $('#faculty').append($('<option />', {id: e.uniqname, text: e.realname}));
+        $('#faculty').append($('<option />', {id: e.uniqname, text: e.cleanname}));
       });
 
       $('#faculty').select2({

@@ -8,7 +8,7 @@ setup:
 	mkdir -p public/json/abstracts public/json/faculty
 
 get-faculty:
-	carton exec 'bin/get_faculty.pl'
+	carton exec 'bin/get_faculty.pl' 2>/dev/null
 
 get-publications:
 	carton exec 'bin/get_publications.pl'

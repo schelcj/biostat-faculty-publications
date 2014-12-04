@@ -15,6 +15,7 @@ my $faculty_url = q{http://www.sph.umich.edu/iscr/faculty/dept.cfm?deptID=1};
 my $css         = q{#main-content > h2:nth-child(9) ~ p > a:nth-child(1)};
 my $agent       = Mojo::UserAgent->new();
 my @uniqnames   = ();
+my @names       = ();
 
 $agent->get($faculty_url)->res->dom($css)->each(
   sub {
@@ -26,4 +27,5 @@ $agent->get($faculty_url)->res->dom($css)->each(
   }
 );
 
-write_file(qq{$Bin/../public/json/faculty.json}, to_json(\@uniqnames, {pretty => 1, utf8 => 1}));
+@names = sort {$a->{cleanname} cmp $b->{cleanname}} @uniqnames;
+write_file(qq{$Bin/../public/json/faculty.json}, to_json(\@names, {pretty => 1, utf8 => 1}));
