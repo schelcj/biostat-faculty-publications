@@ -57,7 +57,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
       return params;
     }
 
-    $.getJSON('json/faculty.json', function(data) {
+    $.getJSON('json/faculty.json?' + Date.now(), function(data) {
       $(data).each(function(i,e) {
         $('#faculty').append($('<option />', {id: e.uniqname, text: e.realname}));
       });
@@ -73,7 +73,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
       var uniqname = $('select#faculty option:selected').attr('id');
       $('#cloud').empty();
 
-      $.getJSON('json/faculty/' + uniqname + '.json', function(data) {
+      $.getJSON('json/faculty/' + uniqname + '.json?' + Date.now(), function(data) {
         var publications    = new Array;
         var publication_map = new Object;
         var co_authors      = new Object;
@@ -108,7 +108,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
           c++;
           journals[article.journalTitle] = c;
 
-          var authors = article.author.split('; ');
+          var authors = article.clean_author.split('; ');
           for (var author in authors) {
             var count = isNaN(co_authors[authors[author]]) ? 0 : co_authors[authors[author]];
             count++;
@@ -239,7 +239,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
                   var eid         = $(this.st.el).attr('id').slice(10);
                   var publication = publication_map[eid];
 
-                  $.getJSON('json/abstracts/' + publication.pmid + '.json', function(data) {
+                  $.getJSON('json/abstracts/' + publication.pmid + '.json?' + Date.now(), function(data) {
                     publication['abst'] = data.abstract;
                   }).always(function() {
                     mfp.items = [publication];
