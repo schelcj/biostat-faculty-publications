@@ -110,9 +110,11 @@ if (typeof(jQuery) != 'undefined') { (function($) {
 
           var authors = article.clean_author.split('; ');
           for (var author in authors) {
-            var count = isNaN(co_authors[authors[author]]) ? 0 : co_authors[authors[author]];
-            count++;
-            co_authors[authors[author]] = count;
+            if (authors[author].toLowerCase() != data.umod_realname.toLowerCase()) {
+              var count = isNaN(co_authors[authors[author]]) ? 0 : co_authors[authors[author]];
+              count++;
+              co_authors[authors[author]] = count;
+            }
           }
 
           article.title.split(' ').map(function(v, i) {
