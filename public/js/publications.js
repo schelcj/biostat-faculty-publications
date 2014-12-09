@@ -117,6 +117,19 @@ if (typeof(jQuery) != 'undefined') { (function($) {
             }
           }
 
+          var title_weight = 1;
+          switch (authors.indexOf(data.umod_realname)) {
+            case 0:
+              title_weight = 2;
+              break;
+            case 1:
+              title_weight = 2;
+              break;
+            case (authors.length - 1):
+              title_weight = 2;
+              break;
+          }
+
           article.title.split(' ').map(function(v, i) {
             var word = v.toLowerCase();
 
@@ -146,7 +159,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
               return;
 
             var count = isNaN(words[word]) ? 0 : words[word];
-            count++;
+            count += title_weight;
             words[word] = count;
           });
         });
