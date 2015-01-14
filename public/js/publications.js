@@ -227,7 +227,7 @@ if (typeof(jQuery) != 'undefined') { (function($) {
             },{
             'targets': [0],
             'createdCell': function (nTd, sData, oData, iRow, iCol) {
-              var authors = oData[3].split(';');
+              var authors = oData[3].split('; ');
 
               $('<a />', {
                 href:   '#',
@@ -237,11 +237,12 @@ if (typeof(jQuery) != 'undefined') { (function($) {
                 }).appendTo($(nTd).empty());
 
               $(nTd).append($('#publication_title_template').render([{
-                'author':  authors[0],
-                'journal': oData[5],
-                'volume':  oData[6],
-                'pages':   oData[7],
-                'year':    oData[4]
+                'first_author': authors[0],
+                'last_author':  authors.slice(-1)[0],
+                'journal':      oData[5],
+                'volume':       oData[6],
+                'pages':        oData[7],
+                'year':         oData[4]
               }]));
             },
           }],
