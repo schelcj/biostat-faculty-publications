@@ -1,3 +1,4 @@
+drop table if exists urls;
 create table urls (
   id         INTEGER UNIQUE PRIMARY KEY,
   faculty_id INTEGER NOT NULL,
