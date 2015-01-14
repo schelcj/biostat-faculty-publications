@@ -1,0 +1,4 @@
+#!/usr/bin/env perl
+use local::lib qw(./);
+use Biostat::Publications::Papers;
+Biostat::Publications::Papers->run;
