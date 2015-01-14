@@ -1,4 +1,4 @@
-*.db
-*.log
 local/
 public/json/
+db/
+log/
