@@ -24,7 +24,7 @@ sub validate_args {
 
   $self->{stash}->{uniqname} = $opt->{uniqname};
   $self->{stash}->{realname} = cleanName($realname);
-  $self->{stash}->{gid}      = $opt->{uid} // undef;
+  $self->{stash}->{gid}      = $opt->{gid} // undef;
 }
 
 sub execute {

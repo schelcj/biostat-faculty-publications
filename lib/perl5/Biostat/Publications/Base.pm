@@ -6,6 +6,7 @@ our @IMPORT_MODULES = (
   'lib' => [qq($ENV{HOME}/src/biostat/lib/perl5)],
   'Modern::Perl',
   'Text::Names' => [qw(cleanName samePerson reverseName)],
+  'Data::Dumper',
 );
 
 our %IMPORT_BUNDLES = (

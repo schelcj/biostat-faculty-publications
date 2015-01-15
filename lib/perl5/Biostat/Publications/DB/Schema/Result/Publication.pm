@@ -35,12 +35,27 @@ __PACKAGE__->table("publications");
   is_foreign_key: 1
   is_nullable: 0
 
-=head2 url
+=head2 src_url
 
   data_type: 'text'
   is_nullable: 0
 
+=head2 pubmed_url
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 scival_url
+
+  data_type: 'text'
+  is_nullable: 1
+
 =head2 title
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 abstract
 
   data_type: 'text'
   is_nullable: 1
@@ -75,6 +90,26 @@ __PACKAGE__->table("publications");
   data_type: 'text'
   is_nullable: 1
 
+=head2 year
+
+  data_type: 'integer'
+  is_nullable: 1
+
+=head2 timescited
+
+  data_type: 'integer'
+  is_nullable: 1
+
+=head2 pmid
+
+  data_type: 'integer'
+  is_nullable: 1
+
+=head2 scopuseid
+
+  data_type: 'integer'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -82,9 +117,15 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
   "faculty_id",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
-  "url",
+  "src_url",
   { data_type => "text", is_nullable => 0 },
+  "pubmed_url",
+  { data_type => "text", is_nullable => 1 },
+  "scival_url",
+  { data_type => "text", is_nullable => 1 },
   "title",
+  { data_type => "text", is_nullable => 1 },
+  "abstract",
   { data_type => "text", is_nullable => 1 },
   "date",
   { data_type => "text", is_nullable => 1 },
@@ -98,6 +139,14 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "authors",
   { data_type => "text", is_nullable => 1 },
+  "year",
+  { data_type => "integer", is_nullable => 1 },
+  "timescited",
+  { data_type => "integer", is_nullable => 1 },
+  "pmid",
+  { data_type => "integer", is_nullable => 1 },
+  "scopuseid",
+  { data_type => "integer", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -130,8 +179,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-10 09:13:25
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:OkViMlsXMs7uwOS8Afq4aw
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2015-01-14 15:55:13
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Em08oGgmAG21tR8XiNvRxg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

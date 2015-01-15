@@ -29,7 +29,12 @@ __PACKAGE__->table("faculty");
   is_auto_increment: 1
   is_nullable: 0
 
-=head2 name
+=head2 realname
+
+  data_type: 'text'
+  is_nullable: 0
+
+=head2 uniqname
 
   data_type: 'text'
   is_nullable: 0
@@ -44,7 +49,9 @@ __PACKAGE__->table("faculty");
 __PACKAGE__->add_columns(
   "id",
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-  "name",
+  "realname",
+  { data_type => "text", is_nullable => 0 },
+  "uniqname",
   { data_type => "text", is_nullable => 0 },
   "gid",
   { data_type => "text", is_nullable => 0 },
@@ -76,17 +83,29 @@ __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->add_unique_constraint("gid_unique", ["gid"]);
 
-=head2 C<name_unique>
+=head2 C<realname_unique>
 
 =over 4
 
-=item * L</name>
+=item * L</realname>
 
 =back
 
 =cut
 
-__PACKAGE__->add_unique_constraint("name_unique", ["name"]);
+__PACKAGE__->add_unique_constraint("realname_unique", ["realname"]);
+
+=head2 C<uniqname_unique>
+
+=over 4
+
+=item * L</uniqname>
+
+=back
+
+=cut
+
+__PACKAGE__->add_unique_constraint("uniqname_unique", ["uniqname"]);
 
 =head1 RELATIONS
 
@@ -121,8 +140,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-08 09:42:01
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:3x78ZlkC8UEGKDhM1hZ5kQ
+# Created by DBIx::Class::Schema::Loader v0.07035 @ 2015-01-14 15:55:13
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:VYYsksEPTTYZX3CPxEpxaw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
