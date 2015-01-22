@@ -25,7 +25,7 @@ our %IMPORT_BUNDLES = (
   biostat => [
     'Biostat::LDAP' => [qw(get_umod_realname)],
     'Biostat::Publication',
-    'Biostat::Publications::DB::Schema',
+    'Biostat::Publications::DB',
   ],
   files => [
     'File::Slurp::Tiny' => [qw(read_file write_file)],
@@ -39,7 +39,6 @@ our %IMPORT_BUNDLES = (
   moose => [
     qw(
       Moose
-      Moose::Role
       )
   ],
   cache => [
