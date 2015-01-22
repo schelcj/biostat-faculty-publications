@@ -15,3 +15,4 @@ requires 'Net::LDAP';
 requires 'XML::XPath';
 requires 'App::Cmd';
 requires 'Import::Base';
+requires 'Cache::File';
