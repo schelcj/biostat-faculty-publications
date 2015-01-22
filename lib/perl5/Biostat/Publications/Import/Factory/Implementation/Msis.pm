@@ -1,4 +1,4 @@
-package Biostat::Publications::Import::Factor::Implementation::Msis;
+package Biostat::Publications::Import::Factory::Implementation::Msis;
 
 use Biostat::Publications::Base qw(biostat cache moose www);
 
@@ -10,6 +10,7 @@ has 'uniqname'   => (is => 'ro', isa => 'Str',         required => 1);
 has 'gid'        => (is => 'ro', isa => 'Str',         required => 1);
 has 'url'        => (is => 'ro', isa => 'Str',         lazy     => 1, builder => '_build_url');
 has 'cache'      => (is => 'ro', isa => 'Cache::File', lazy     => 1, builder => '_build_cache');
+has 'raw '       => (is => 'ro', isa => 'Str',         lazy     => 1, builder => '_build_raw');
 
 sub _build_url {
   return sprintf $URL_FMT, shift->uniqname;
@@ -19,9 +20,17 @@ sub _build_cache {
   return Cache::File->new(cache_root => $CACHE_ROOT);
 }
 
+sub _build_raw {
+  my ($self) = @_;
+  my $agent = Mojo::UserAgent->new();
+  return $agent->get($self->url)->res->content->asset->slurp;
+}
+
 sub get_publications {
   my ($self) = @_;
-  return;
+
+
+
 }
 
 no Moose;

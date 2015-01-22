@@ -1,7 +1,8 @@
 package Biostat::Publications::Papers::Command::import;
 
-use Biostat::Publications::Base;
 use Biostat::Publications::Papers -command;
+use Biostat::Publications::Base;
+use Biostat::Publications::Import::Factory;
 
 sub opt_spec {
   return (['source|s=s', 'Where to retrieve publications from (google or msis)'],);
@@ -10,7 +11,7 @@ sub opt_spec {
 sub validate_args {
   my ($self, $opt, $args) = @_;
 
-  if ($opt->{source} !~ /google|msis/) {
+  if ($opt->{source} !~ /google|msis/i) {
     $self->usage_error('Source must be one of (google | msis)');
   }
 }
@@ -23,7 +24,7 @@ sub execute {
 
   for my $member (@faculty) {
     my $import = Biostat::Publications::Import::Factory->create(
-      ucfirst($opt->{source}), {
+      ucfirst(lc($opt->{source})), {
         faculty_id => $member->id,
         uniqname   => $member->uniqname,
         gid        => $member->gid,

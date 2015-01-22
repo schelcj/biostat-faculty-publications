@@ -1,6 +1,6 @@
-package Biostat::Publications::Import::Factor::Implementation::Requires;
+package Biostat::Publications::Import::Factory::Implementation::Requires;
 
-use Biostat::Publications::Base qw(moose);
+use Moose::Role;
 
 requires(
   qw(
