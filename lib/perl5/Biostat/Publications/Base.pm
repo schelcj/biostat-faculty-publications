@@ -3,10 +3,12 @@ package Biostat::Publications::Base;
 use base 'Import::Base';
 
 our @IMPORT_MODULES = (
-  'lib' => [qq($ENV{HOME}/src/biostat/lib/perl5)],
-  'Modern::Perl',
+  'lib'         => [qq($ENV{HOME}/src/biostat/lib/perl5)],
+  'FindBin'     => [qw($Bin)],
   'Text::Names' => [qw(cleanName samePerson reverseName)],
+  'Modern::Perl',
   'Data::Dumper',
+  'Readonly',
 );
 
 our %IMPORT_BUNDLES = (
@@ -22,7 +24,8 @@ our %IMPORT_BUNDLES = (
   ],
   biostat => [
     'Biostat::LDAP' => [qw(get_umod_realname)],
-    'Biostat::Publications::DB',
+    'Biostat::Publication',
+    'Biostat::Publications::DB::Schema',
   ],
   files => [
     'File::Slurp::Tiny' => [qw(read_file write_file)],
@@ -32,7 +35,18 @@ our %IMPORT_BUNDLES = (
     qw(
       Test::More
       )
-  ]
+  ],
+  moose => [
+    qw(
+      Moose
+      Moose::Role
+      )
+  ],
+  cache => [
+    qw(
+      Cache::File
+      )
+  ],
 );
 
 1;

@@ -4,15 +4,36 @@ use Biostat::Publications::Base;
 use Biostat::Publications::Papers -command;
 
 sub opt_spec {
-  return (
-    ['source|s=s', 'Where to retrieve publications from (google or msis)'],
-  );
+  return (['source|s=s', 'Where to retrieve publications from (google or msis)'],);
 }
 
 sub validate_args {
+  my ($self, $opt, $args) = @_;
+
+  if ($opt->{source} !~ /google|msis/) {
+    $self->usage_error('Source must be one of (google | msis)');
+  }
 }
 
 sub execute {
+  my ($self, $opt, $args) = @_;
+
+  my $db      = Biostat::Publications::DB->new();
+  my @faculty = $db->resultset('Faculty')->all();
+
+  for my $member (@faculty) {
+    my $import = Biostat::Publications::Import::Factory->create(
+      ucfirst($opt->{source}), {
+        faculty_id => $member->id,
+        uniqname   => $member->uniqname,
+        gid        => $member->gid,
+      }
+    );
+
+    for my $publication ($import->get_publications) {
+    }
+  }
+
 }
 
 1;
