@@ -16,3 +16,6 @@ requires 'XML::XPath';
 requires 'App::Cmd';
 requires 'Import::Base';
 requires 'Cache::File';
+requires 'Moose';
+requires 'Moose::Role';
+requires 'MooseX::AbstractFactory';
