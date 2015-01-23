@@ -7,17 +7,21 @@ has 'src_url'    => (is => 'rw', isa => 'Str', required => 1);
 has 'pudmed_url' => (is => 'rw', isa => 'Str');
 has 'scival_url' => (is => 'rw', isa => 'Str');
 has 'title'      => (is => 'rw', isa => 'Str');
-has 'abstract'   => (is => 'rw', isa => 'Str');
+has 'abstract'   => (is => 'rw', isa => 'Maybe[Str]');
 has 'date'       => (is => 'rw', isa => 'Str');
 has 'journal'    => (is => 'rw', isa => 'Str');
-has 'volume'     => (is => 'rw', isa => 'Str');
-has 'issue'      => (is => 'rw', isa => 'Str');
-has 'pages'      => (is => 'rw', isa => 'Str');
-has 'authors'    => (is => 'rw', isa => 'Str');
+has 'volume'     => (is => 'rw', isa => 'Maybe[Str]');
+has 'issue'      => (is => 'rw', isa => 'Maybe[Str]');
+has 'pages'      => (is => 'rw', isa => 'Maybe[Str]');
+has 'authors'    => (is => 'rw', isa => 'Str');    # XXX - make this an array of cleaned names
 has 'year'       => (is => 'rw', isa => 'Int');
 has 'timescited' => (is => 'rw', isa => 'Int');
-has 'pmid'       => (is => 'rw', isa => 'Int');
-has 'scopeuseid' => (is => 'rw', isa => 'Int');
+has 'pmid'       => (is => 'rw', isa => 'Maybe[Int]');
+has 'scopuseid'  => (is => 'rw', isa => 'Int');
+
+around 'authors' => sub {
+  my ($orig, $self) = @_;
+};
 
 sub is_cached {
   my ($self) = @_;
