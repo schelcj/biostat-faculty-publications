@@ -8,3 +8,4 @@ create table urls (
 );
 
 create index urls_faculty_id_idx on urls (faculty_id);
+create index publications_faculty_id_idx on urls (faculty_id);

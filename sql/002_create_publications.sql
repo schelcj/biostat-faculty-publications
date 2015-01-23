@@ -20,5 +20,3 @@ create table publications (
 
   foreign key(faculty_id) references faculty(id)
 );
-
-create index publications_faculty_id_idx on urls (faculty_id);
