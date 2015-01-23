@@ -9,6 +9,7 @@ our @IMPORT_MODULES = (
   'Modern::Perl',
   'Data::Dumper',
   'Readonly',
+  'Biostat::Publications::Constants' => [qw(:all)],
 );
 
 our %IMPORT_BUNDLES = (
