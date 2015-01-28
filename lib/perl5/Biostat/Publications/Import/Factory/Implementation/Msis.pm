@@ -43,7 +43,7 @@ sub get_publications {
       src_url    => $self->url,
       scival_url => $article->{scivalURL},
       title      => $article->{title},
-      abstract   => $EMPTY,                          # XXX - need to fetch the abstract from nih
+      abstract   => $EMPTY,
       journal    => $article->{journalTitle},
       volume     => $article->{journalVolume},
       issue      => $article->{journalIssue},
@@ -55,8 +55,6 @@ sub get_publications {
       scopuseid  => $article->{scopusEID},
     );
   }
-
-  print Dumper $publications;
 
   return $publications;
 }
