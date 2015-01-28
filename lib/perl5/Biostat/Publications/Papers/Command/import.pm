@@ -32,6 +32,8 @@ sub execute {
     );
 
     for my $publication ($import->get_publications) {
+      $publication->save;
+      print Dumper $publication;
     }
   }
 
