@@ -13,29 +13,31 @@ has 'journal'    => (is => 'rw', isa => 'Str');
 has 'volume'     => (is => 'rw', isa => 'Maybe[Str]');
 has 'issue'      => (is => 'rw', isa => 'Maybe[Str]');
 has 'pages'      => (is => 'rw', isa => 'Maybe[Str]');
-has 'authors'    => (is => 'rw', isa => 'Str');    # XXX - make this an array of cleaned names
+has 'authors'    => (is => 'rw', isa => 'Str');
 has 'year'       => (is => 'rw', isa => 'Int');
 has 'timescited' => (is => 'rw', isa => 'Int');
 has 'pmid'       => (is => 'rw', isa => 'Maybe[Int]');
 has 'scopuseid'  => (is => 'rw', isa => 'Int');
 
+has 'db' => (is => 'ro', isa => 'Biostat::Publications::DB', lazy => 1, builder => '_builder_db');
+
 around 'authors' => sub {
   my ($orig, $self) = @_;
+  # XXX - clean up author names and remove duplicates
 };
 
-sub is_cached {
-  my ($self) = @_;
-  return 1;
+sub _build_db {
+  return Biostat::Publications::DB->new();
 }
 
 sub save {
   my ($self) = @_;
-  return;
+  return $TRUE;
 }
 
 sub update {
   my ($self) = @_;
-  return;
+  return $TRUE;
 }
 
 no Moose;
