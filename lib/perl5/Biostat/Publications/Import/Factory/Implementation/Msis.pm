@@ -36,14 +36,13 @@ sub _build_articles {
 sub get_publications {
   my ($self) = @_;
 
-  my $publications = [];
+  my @publications = ();
   for my $article (@{$self->articles}) {
-    push @{$publications}, Biostat::Publication->new(
+    push @publications, Biostat::Publication->new(
       faculty_id => $self->faculty_id,
       src_url    => $self->url,
       scival_url => $article->{scivalURL},
       title      => $article->{title},
-      abstract   => $EMPTY,
       journal    => $article->{journalTitle},
       volume     => $article->{journalVolume},
       issue      => $article->{journalIssue},
@@ -56,7 +55,7 @@ sub get_publications {
     );
   }
 
-  return $publications;
+  return wantarray ? @publications : \@publications;
 }
 
 no Moose;

@@ -31,10 +31,11 @@ sub execute {
       }
     );
 
+    print 'Retrieving publications for ' . $member->realname . ' - ';
     for my $publication ($import->get_publications) {
       $publication->save;
-      print Dumper $publication;
     }
+    say ' Done';
   }
 
 }
