@@ -107,7 +107,7 @@ __PACKAGE__->table("publications");
 
 =head2 scopuseid
 
-  data_type: 'integer'
+  data_type: 'text'
   is_nullable: 1
 
 =cut
@@ -146,7 +146,7 @@ __PACKAGE__->add_columns(
   "pmid",
   { data_type => "integer", is_nullable => 1 },
   "scopuseid",
-  { data_type => "integer", is_nullable => 1 },
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -179,8 +179,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2015-01-14 15:55:13
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Em08oGgmAG21tR8XiNvRxg
+# Created by DBIx::Class::Schema::Loader v0.07042 @ 2015-01-29 09:15:38
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:xCY8ns/2aT0q3aJTJ0gbOA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
