@@ -16,7 +16,7 @@ create table publications (
   year        INTEGER NULL,
   timescited  INTEGER NULL,
   pmid        INTEGER NULL,
-  scopuseid   INTEGER NULL,
+  scopuseid   TEXT NULL,
 
   foreign key(faculty_id) references faculty(id)
 );
