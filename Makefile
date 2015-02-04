@@ -1,6 +1,5 @@
-DOC_ROOT=/afs/umich.edu/group/s/sph/web/htdocs/biostat
-SITE_DIR=$(DOC_ROOT)/publications
-DEV_SITE_DIR=$(DOC_ROOT)/dev/publications
+WWW_HOST=www.sph.umich.edu
+DOC_ROOT=/var/www/html/biostat/dev/publications
 DB_FILE=$(PWD)/db/publications.db
 SQL_FILES=${shell find ${PWD}/sql -name '*.sql'}
 DB_SCHEMA_DIR=$(PWD)/lib/perl5
@@ -33,12 +32,7 @@ clean-author-names:
 	carton exec 'bin/clean_authors.pl' 2>/dev/null
 
 install:
-	rsync -v -a --no-owner --no-group public/ $(SITE_DIR)/
-	chmod 755 $(SITE_DIR)/index.html
-
-install-dev:
-	rsync -v -a --no-owner --no-group public/ $(DEV_SITE_DIR)/
-	chmod 755 $(DEV_SITE_DIR)/index.html
+	rsync -v -a --no-owner --no-group --no-times --no-perms public/ $(WWW_HOST):$(DOC_ROOT)/
 
 install-cpan-deps:
 	carton install
