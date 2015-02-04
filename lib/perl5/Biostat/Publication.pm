@@ -54,10 +54,14 @@ sub save {
     }
   );
 
-  if ($count) {
-    say '[CACHE HIT]: ' . $self->scopuseid;
-  } else {
+  unless ($count) {
     $self->db->resultset('Publication')->create($self->to_hashref);
+    $self->db->resultset('Abstract')->create(
+      {
+        pmid => $self->pmid,
+        text => $self->abstract // $EMPTY,
+      }
+    );
   }
 
   return $TRUE;
