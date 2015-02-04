@@ -9,7 +9,6 @@ our @IMPORT_MODULES = (
   'Modern::Perl',
   'Data::Dumper',
   'Readonly',
-  'Biostat::Publications::Constants' => [qw(:all)],
 );
 
 our %IMPORT_BUNDLES = (
@@ -24,7 +23,8 @@ our %IMPORT_BUNDLES = (
       )
   ],
   biostat => [
-    'Biostat::LDAP' => [qw(get_umod_realname)],
+    'Biostat::Publications::Constants' => [qw(:all)],
+    'Biostat::LDAP'                    => [qw(get_umod_realname)],
     'Biostat::Publication',
     'Biostat::Publications::DB',
   ],
