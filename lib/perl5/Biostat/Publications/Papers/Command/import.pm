@@ -5,7 +5,9 @@ use Biostat::Publications::Base;
 use Biostat::Publications::Import::Factory;
 
 sub opt_spec {
-  return (['source|s=s', 'Where to retrieve publications from (google or msis)'],);
+  return (
+    ['source|s=s', 'Where to retrieve publications from (google or msis)'],
+  );
 }
 
 sub validate_args {
