@@ -9,11 +9,14 @@
 
 #publications {
   border-collapse: separate;
-  border-spacing: 10px;
 }
 
 #publications tbody td {
   border: 0px solid #000000 !important;
+}
+
+#publications tbody tr td {
+  font-size: initial;
 }
 
 #publications tbody td a:link {
@@ -26,7 +29,6 @@
 
 #publications tbody td .pub-desc {
   padding-left: 10px;
-  font-size: smaller;
   color: #242424;
   margin-top: 1%;
 }
@@ -94,9 +96,10 @@
   float: left;
   width: 100% !important;
   font-size: small;
-  background: #F4F4F4;
+  background: #4eb7a8;
   box-shadow: 1px 1px 3px rgba(0,0,0,.3);
   padding-left: 5px;
+  text-color: #00274c;
 }
 
 #pub-summary div {
@@ -108,7 +111,6 @@
 
 #pub-summary ul,
 #pub-summary h3 {
-  margin: 0px 0px !important;
   text-align: left;
 }
 
@@ -119,16 +121,18 @@
 
 #pub-summary h3 {
   padding: 3px;
-  border-bottom: 1px solid #666666;
   margin-bottom: 2px !important;
 }
 
 #pub-summary div {
   float: left;
-  margin: 5px 10px 0px 0px !important;
   padding: 0px !important;
   border: 0px !important;
   max-width: 50%;
+}
+
+#pub-summary #co-authors h3 {
+  margin-right: 10px;
 }
 
 #pub-summary .summary-link {
@@ -141,3 +145,14 @@
   width: 500px;
   height: 300px;
 }
+
+.w1 { }
+.w2 { }
+.w3 { }
+.w4 { }
+.w5 { }
+.w6 { }
+.w7 { }
+.w8 { }
+.w9 { }
+.w10 { }
