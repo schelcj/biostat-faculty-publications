@@ -196,8 +196,8 @@ if (typeof(jQuery) != 'undefined') { (function($) {
         var top_journals   = get_top_five(journals);
 
         $('#pub-summary').removeClass('hide');
-        $('#pub-summary #co-authors ul').empty().append($('#publication_summary_template').render(top_co_authors));
-        $('#pub-summary #journals ul').empty().append($('#publication_summary_template').render(top_journals));
+        $('#pub-summary #co-authors p').empty().append($('#publication_summary_template').render(top_co_authors));
+        $('#pub-summary #journals p').empty().append($('#publication_summary_template').render(top_journals));
 
         $('.summary-link').click(function() {
           $('input[type=search]').val($(this).text()).focus().keyup();

@@ -91,55 +91,6 @@
   font-color: #666666;
 }
 
-#pub-summary {
-  margin: 20px 0px;
-  float: left;
-  width: 100% !important;
-  font-size: small;
-  background: #4eb7a8;
-  box-shadow: 1px 1px 3px rgba(0,0,0,.3);
-  padding-left: 5px;
-  text-color: #00274c;
-}
-
-#pub-summary div {
-  min-height: 150px !important;
-  min-width: 325px;
-  box-shadow: none !important;
-  background: none !important;
-}
-
-#pub-summary ul,
-#pub-summary h3 {
-  text-align: left;
-}
-
-#pub-summary ul {
-  padding-right: 5px;
-  list-style: decimal;
-}
-
-#pub-summary h3 {
-  padding: 3px;
-  margin-bottom: 2px !important;
-}
-
-#pub-summary div {
-  float: left;
-  padding: 0px !important;
-  border: 0px !important;
-  max-width: 50%;
-}
-
-#pub-summary #co-authors h3 {
-  margin-right: 10px;
-}
-
-#pub-summary .summary-link {
-  text-decoration: none !important;
-  color: #024794;
-}
-
 #cloud {
   margin: 10px 0px;
   width: 500px;

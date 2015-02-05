@@ -46,18 +46,22 @@
 
           <div id="cloud"></div>
 
-          <div id="pub-summary" class="hide">
-            <div id="co-authors">
-              <h3>Top five most common co-authors</h3>
-              <ul>
-              </ul>
-            </div>
+          <div class="column large-12 medium-12 small-12 right hide" id="pub-summary">
+            <ul class="audience-promo-links">
+              <li class="column large-6 medium-6 small-12" id="co-authors">
+                <a>
+                  <h3>Top five most common co-authors</h3>
+                  <p></p>
+                </a>
+              </li>
 
-            <div id="journals">
-              <h3>Top five most common journals</h3>
-              <ul>
-              </ul>
-            </div>
+              <li class="column large-6 medium-6 small-12" id="journals">
+                <a>
+                  <h3>Top five most common journals</h3>
+                  <p></p>
+                </a>
+              </li>
+            </ul>
           </div>
 
           <table id="publications"></table>
@@ -102,7 +106,7 @@
           </script>
 
           <script id="publication_summary_template" type="text/x-jsrender">
-            <li><a href="#" class="summary-link">{{>name}}</a></li>
+            <a href="#" class="summary-link">{{>name}}</a>
           </script>
 
         </div>
