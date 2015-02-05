@@ -108,3 +108,7 @@ div.jqcloud span.w7  { color: rgba(0,39,76,.8); }
 div.jqcloud span.w8  { color: rgba(0,39,76,.8); }
 div.jqcloud span.w9  { color: rgba(0,39,76,.8); }
 div.jqcloud span.w10 { color: #003e78; }
+
+#content {
+  padding-top: 0px;
+}
