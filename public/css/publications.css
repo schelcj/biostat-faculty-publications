@@ -97,13 +97,15 @@
   height: 300px;
 }
 
-.w1 { }
-.w2 { }
-.w3 { }
-.w4 { }
-.w5 { }
-.w6 { }
-.w7 { }
-.w8 { }
-.w9 { }
-.w10 { }
+div.jqcloud a:hover  { color: #3473ec; }
+div.jqcloud a.cloud { text-decoration: none !important; }
+div.jqcloud span.w1  { color: rgba(68,68,68,.85); }
+div.jqcloud span.w2  { color: rgba(68,68,68,.85); }
+div.jqcloud span.w3  { color: rgba(68,68,68,.85); }
+div.jqcloud span.w4  { color: rgba(0,39,76,.8); }
+div.jqcloud span.w5  { color: rgba(0,39,76,.8); }
+div.jqcloud span.w6  { color: rgba(0,39,76,.8); }
+div.jqcloud span.w7  { color: rgba(0,39,76,.8); }
+div.jqcloud span.w8  { color: rgba(0,39,76,.8); }
+div.jqcloud span.w9  { color: rgba(0,39,76,.8); }
+div.jqcloud span.w10 { color: #003e78; }
