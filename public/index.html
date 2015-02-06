@@ -40,29 +40,31 @@
           <!-- START MAIN CONTENT WELL -->
           <div id="main-content" class="quaternary-page column large-9 medium-9 small-12">
 
+          <h1 class="pageTitle">
+            Faculty Publications
+          </h1>
+
+          <p id="desc">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin faucibus dolor et lacinia suscipit. Duis pretium diam a arcu interdum, auctor posuere elit varius. Vivamus pharetra, turpis in gravida eleifend, lacus libero ornare ante, ac iaculis sapien arcu vel felis. Aenean aliquam felis non fringilla congue. Aliquam nec erat at urna porttitor molestie ut a leo.
+          </p>
+
           <select id="faculty">
             <option></option>
           </select>
 
-          <div id="cloud"></div>
+          <div id="pub-summary" class="hide">
+            <div id="co-authors">
+              <h3>Top five most common co-authors</h3>
+              <ul></ul>
+            </div>
 
-          <div class="column large-12 medium-12 small-12 right hide" id="pub-summary">
-            <ul class="audience-promo-links">
-              <li class="column large-6 medium-6 small-12" id="co-authors">
-                <div>
-                  <h3>Top five most common co-authors</h3>
-                  <p></p>
-                </div>
-              </li>
-
-              <li class="column large-6 medium-6 small-12" id="journals">
-                <div>
-                  <h3>Top five most common journals</h3>
-                  <p></p>
-                </div>
-              </li>
-            </ul>
+            <div id="journals">
+              <h3>Top five most common journals</h3>
+              <ul></ul>
+            </div>
           </div>
+
+          <div id="cloud"></div>
 
           <table id="publications"></table>
 
@@ -106,7 +108,7 @@
           </script>
 
           <script id="publication_summary_template" type="text/x-jsrender">
-            <a href="#" class="summary-link">{{>name}}</a>
+            <li><a href="#" class="summary-link">{{>name}}</a></li>
           </script>
 
         </div>

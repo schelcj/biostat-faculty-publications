@@ -7,8 +7,17 @@
   margin-bottom: 25px;
 }
 
-#pub-summary ul li div {
-  background: #4eb7a8;
+#pub-summary {
+  float: left;
+}
+
+#pub-summary div {
+  float: left;
+  max-width: 50%;
+}
+
+#pub-summary ul {
+  list-style: decimal;
 }
 
 #publications tbody tr td {
@@ -82,13 +91,13 @@
 }
 
 #cloud {
-  margin: 20px auto;
   width: 500px;
   height: 300px;
+  margin: 0px auto;
 }
 
 div.jqcloud a:hover  { color: #3473ec; }
-div.jqcloud a.cloud { text-decoration: none !important; }
+div.jqcloud a.cloud  { text-decoration: none !important; }
 div.jqcloud span.w1  { color: rgba(68,68,68,.85); }
 div.jqcloud span.w2  { color: rgba(68,68,68,.85); }
 div.jqcloud span.w3  { color: rgba(68,68,68,.85); }
@@ -99,7 +108,3 @@ div.jqcloud span.w7  { color: rgba(0,39,76,.8); }
 div.jqcloud span.w8  { color: rgba(0,39,76,.8); }
 div.jqcloud span.w9  { color: rgba(0,39,76,.8); }
 div.jqcloud span.w10 { color: #003e78; }
-
-#content {
-  padding-top: 0px;
-}
