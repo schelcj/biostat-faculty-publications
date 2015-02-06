@@ -7,29 +7,12 @@
   margin-bottom: 25px;
 }
 
-#publications {
-  border-collapse: separate;
-}
-
-#publications tbody td {
-  border: 0px solid #000000 !important;
-}
-
 #publications tbody tr td {
   font-size: initial;
 }
 
-#publications tbody td a:link {
-  text-decoration: none !important;
-}
-
-#publications tbody td a:visited {
-  color: #024794;
-}
-
 #publications tbody td .pub-desc {
   padding-left: 10px;
-  color: #242424;
   margin-top: 1%;
 }
 
@@ -39,6 +22,10 @@
   text-align: right;
   margin-right: 1%;
   display: inline-block;
+}
+
+#publications tbody tr.even {
+  background-color: #dfdfdf;
 }
 
 .white-popup {
