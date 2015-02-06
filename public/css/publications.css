@@ -7,6 +7,10 @@
   margin-bottom: 25px;
 }
 
+#pub-summary ul li div {
+  background: #4eb7a8;
+}
+
 #publications tbody tr td {
   font-size: initial;
 }
@@ -78,7 +82,7 @@
 }
 
 #cloud {
-  margin: 10px 0px;
+  margin: 20px auto;
   width: 500px;
   height: 300px;
 }
