@@ -32,7 +32,7 @@ clean-author-names:
 	carton exec 'bin/clean_authors.pl' 2>/dev/null
 
 install:
-	rsync -v -a --no-owner --no-group --no-times --no-perms public/ $(WWW_HOST):$(DOC_ROOT)/
+	rsync -v -a --no-owner --no-group --no-times --no-perms --delete public/ $(WWW_HOST):$(DOC_ROOT)/
 
 install-cpan-deps:
 	carton install
