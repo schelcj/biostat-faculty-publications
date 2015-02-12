@@ -10,7 +10,6 @@ package Biostat::Publications::Papers::Command::abstracts;
 use Biostat::Publications::Papers -command;
 use Biostat::Publications::Base qw(biostat www);
 
-Readonly::Scalar my $ALIAS          => q{Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36};
 Readonly::Scalar my $PUBMED_URL_FMT => q{http://www.ncbi.nlm.nih.gov/pubmed/%d?report=xml&format=text};
 Readonly::Scalar my $XPATH          => q{//PubmedArticle/MedlineCitation/Article/Abstract/AbstractText};
 
@@ -24,6 +23,8 @@ sub execute {
   if ($opt->{import}) {
     my $db    = Biostat::Publications::DB->new();
     my $agent = Mojo::UserAgent->new;
+
+    $agent->transactor->name($USER_AGENT_ALIASES{'Linux Ubuntu Chrome'});
 
     for my $pub ($db->resultset('Publication')->all) {
       next unless $pub->pmid;
