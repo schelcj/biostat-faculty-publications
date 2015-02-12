@@ -56,6 +56,6 @@ Readonly::Hash our %USER_AGENT_ALIASES => (
   'Linux Mozilla'       => 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.4) Gecko/20030624',
   'Linux Konqueror'     => 'Mozilla/5.0 (compatible; Konqueror/3; Linux)',
   'Linux Ubuntu FF'     => q{Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:20.0) Gecko/20100101 Firefox/20.0},
-  'Linux Ubuntu Chrome' => q{Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36};
+  'Linux Ubuntu Chrome' => q{Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36},
 );
 1;
