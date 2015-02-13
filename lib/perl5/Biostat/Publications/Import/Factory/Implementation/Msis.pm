@@ -1,6 +1,6 @@
 package Biostat::Publications::Import::Factory::Implementation::Msis;
 
-use Biostat::Publications::Base qw(biostat moose www);
+use Biostat::Publications::Base qw(biostat formats moose www);
 
 Readonly::Scalar my $URL_FMT => q{https://www.umms.med.umich.edu/profile/publications/%s.json};
 

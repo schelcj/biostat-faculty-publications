@@ -19,7 +19,6 @@ our %IMPORT_BUNDLES = (
       URI
       URI::QueryParam
       XML::XPath
-      JSON
       )
   ],
   biostat => [
@@ -29,8 +28,10 @@ our %IMPORT_BUNDLES = (
     'Biostat::Publications::DB',
   ],
   files => [
+    'IO::All'           => ['-utf8'],
     'File::Slurp::Tiny' => [qw(read_file write_file)],
     'File::Temp',
+    'File::Basename',
   ],
   testing => [
     qw(
@@ -40,6 +41,7 @@ our %IMPORT_BUNDLES = (
   moose => [
     qw(
       Moose
+      Biostat::Publications::Types
       )
   ],
   cache => [
@@ -47,6 +49,12 @@ our %IMPORT_BUNDLES = (
       Cache::File
       )
   ],
+  formats => [
+    qw(
+      JSON
+      Class::CSV
+      )
+  ]
 );
 
 1;
