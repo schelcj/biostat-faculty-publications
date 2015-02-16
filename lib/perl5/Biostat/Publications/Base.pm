@@ -5,6 +5,7 @@ use base 'Import::Base';
 our @IMPORT_MODULES = (
   'lib'         => [qq($ENV{HOME}/src/biostat/lib/perl5)],
   'FindBin'     => [qw($Bin)],
+  'Carp'        => [qw(carp croak)],
   'Text::Names' => [qw(cleanName samePerson reverseName)],
   'Modern::Perl',
   'Data::Dumper',
@@ -53,6 +54,7 @@ our %IMPORT_BUNDLES = (
     qw(
       JSON
       Class::CSV
+      Excel::Writer::XLSX
       )
   ]
 );

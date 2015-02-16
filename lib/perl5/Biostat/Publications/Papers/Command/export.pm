@@ -6,7 +6,7 @@ use Biostat::Publications::Export::Factory;
 
 sub opt_spec {
   return (
-    ['format|f=s', 'Format to output publication data to [json|csv]'],
+    ['format|f=s', 'Format to output publication data to [json|csv|xls]'],
     ['output|o=s', 'Where to write output (defaults to STDOUT)'],
   );
 }
@@ -14,8 +14,8 @@ sub opt_spec {
 sub validate_args {
   my ($self, $opt, $args) = @_;
 
-  if ($opt->{format} !~ /json|csv/i) {
-    $self->usage_error('Invalid format specified. Must be one of (json | csv)');
+  if ($opt->{format} !~ /json|csv|xls/i) {
+    $self->usage_error('Invalid format specified. Must be one of (json | csv | xls)');
   }
 }
 

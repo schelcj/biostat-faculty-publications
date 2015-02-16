@@ -11,4 +11,9 @@ sub write_output {
   return;
 }
 
+sub is_stdout {
+  return shift->output eq $HYPHEN;
+}
+
+
 1;

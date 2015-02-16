@@ -22,3 +22,4 @@ requires 'MooseX::AbstractFactory';
 requires 'Moose::Util::TypeConstraints';
 requires 'Class::CSV';
 requires 'IO::All';
+requires 'Excel::Writer::XLSX';
