@@ -23,15 +23,16 @@ sub export {
   $csv->add_line(\@HEADERS);
 
  for my $publication (@publications) {
-   my $line          = {map {$_ => $publication->$_} grep {!/abstract/} @HEADERS};
-   #  $line->{abstract} = $publication->abstracts->first;
+   my $line = {map {$_ => $publication->$_} grep {!/abstract/} @HEADERS};
 
-   print Dumper $line;
+   if ($publication->abstracts->count) {
+     $line->{abstract} = $publication->abstracts->first->text;
+   }
 
    $csv->add_line($line);
  }
 
-  $self->write_output($csv->string);
+ $self->write_output($csv->string);
 
   return;
 }
