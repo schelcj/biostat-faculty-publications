@@ -9,7 +9,7 @@ all: setup get-faculty get-publications clean-author-names get-abstracts
 .PHONY: $(SQL_FILES)
 
 $(SQL_FILES):
-		sqlite3 $(DB_FILE) < $@
+		@mysql -h $(DB_HOST) -u $(DB_USER) -p$(DB_PASS) $(DB) < $@
 
 load_db: $(SQL_FILES)
 
@@ -36,3 +36,6 @@ install:
 
 install-cpan-deps:
 	carton install
+
+test:
+	prove t/

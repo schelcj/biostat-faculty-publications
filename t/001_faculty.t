@@ -7,15 +7,15 @@ use Text::Names qw(cleanName parseName);
 use Data::Dumper;
 use Encode;
 
-use Biostat::Publications::DB::Schema;
+use Biostat::Publications::DB;
 
-use Test::More tests => 60;
+use Test::More tests => 58;
 use Test::utf8;
 
-my $schema = Biostat::Publications::DB::Schema->connect('dbi:SQLite:db/publications.db');
+my $schema = Biostat::Publications::DB->new();
 for my $member ($schema->resultset('Faculty')->all()) {
-  my $name = encode('utf8', cleanName(decode('utf8', $member->name)));
-  diag($name);
+  my $name = encode('utf8', cleanName(decode('utf8', $member->realname)));
+  # diag($name);
   is_valid_string($name);
   is_valid_string(cleanName($name));
 }

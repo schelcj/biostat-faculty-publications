@@ -1,11 +1,11 @@
+set foreign_key_checks=0;
 drop table if exists urls;
 create table urls (
-  id         INTEGER UNIQUE PRIMARY KEY,
-  faculty_id INTEGER NOT NULL,
-  url        TEXT NOT NULL,
+  id         int unsigned not null auto_increment,
+  faculty_id int unsigned not null,
+  url        text not null,
 
-  foreign key(faculty_id) references faculty(id)
+  primary key (id),
+  foreign key fk_fac(faculty_id) references faculty(id) on delete cascade on update cascade,
+  key (faculty_id)
 );
-
-create index urls_faculty_id_idx on urls (faculty_id);
-create index publications_faculty_id_idx on urls (faculty_id);
