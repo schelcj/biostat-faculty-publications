@@ -23,3 +23,6 @@ requires 'Moose::Util::TypeConstraints';
 requires 'Class::CSV';
 requires 'IO::All';
 requires 'Excel::Writer::XLSX';
+
+test_requires 'Test::More';
+test_requires 'Test::utf8';
