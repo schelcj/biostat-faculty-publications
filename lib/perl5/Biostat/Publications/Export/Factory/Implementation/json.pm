@@ -6,6 +6,10 @@ with 'Biostat::Publications::Export::Roles::Output';
 
 sub export {
   my ($self) = @_;
+
+  my $db = Biostat::Publications::DB->new();
+  my @faculty = $db->resultset('Faculty')->all;
+
   return $TRUE;
 }
 
