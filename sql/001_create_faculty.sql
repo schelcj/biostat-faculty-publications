@@ -5,9 +5,12 @@ create table faculty (
   realname varchar(255),
   uniqname varchar(255),
   gid      varchar(20),
+  dept_id  int unsigned not null,
 
   primary key (id),
   unique key (realname),
   unique key (uniqname),
-  unique key (gid)
+  unique key (gid),
+  key (dept_id),
+  foreign key fk_dept(dept_id) references departments(id) on delete cascade on update cascade
 );

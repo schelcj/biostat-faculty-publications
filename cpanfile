@@ -6,6 +6,7 @@ requires 'File::Slurp::Tiny';
 requires 'Getopt::Compact';
 requires 'Modern::Perl';
 requires 'DBD::SQLite';
+requires 'DBD::mysql';
 requires 'Text::Names';
 requires 'YAML';
 requires 'JSON::Any';
@@ -23,6 +24,9 @@ requires 'Moose::Util::TypeConstraints';
 requires 'Class::CSV';
 requires 'IO::All';
 requires 'Excel::Writer::XLSX';
+
+requires 'Task::Plack';
+requires 'Mojolicious::Lite';
 
 test_requires 'Test::More';
 test_requires 'Test::utf8';

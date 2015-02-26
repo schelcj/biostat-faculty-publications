@@ -26,12 +26,14 @@ __PACKAGE__->table("abstracts");
 =head2 id
 
   data_type: 'integer'
+  extra: {unsigned => 1}
   is_auto_increment: 1
   is_nullable: 0
 
 =head2 pmid
 
   data_type: 'integer'
+  extra: {unsigned => 1}
   is_foreign_key: 1
   is_nullable: 0
 
@@ -44,9 +46,19 @@ __PACKAGE__->table("abstracts");
 
 __PACKAGE__->add_columns(
   "id",
-  { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
+  {
+    data_type => "integer",
+    extra => { unsigned => 1 },
+    is_auto_increment => 1,
+    is_nullable => 0,
+  },
   "pmid",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
+  {
+    data_type => "integer",
+    extra => { unsigned => 1 },
+    is_foreign_key => 1,
+    is_nullable => 0,
+  },
   "text",
   { data_type => "text", is_nullable => 1 },
 );
@@ -77,12 +89,12 @@ __PACKAGE__->belongs_to(
   "pmid",
   "Biostat::Publications::DB::Schema::Result::Publication",
   { pmid => "pmid" },
-  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+  { is_deferrable => 1, on_delete => "CASCADE", on_update => "CASCADE" },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07042 @ 2015-01-29 11:52:10
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:F0N3Eqqjek5ycDqA/vPPnQ
+# Created by DBIx::Class::Schema::Loader v0.07042 @ 2015-02-20 09:56:39
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+/m05m+QnreJLB977OcevA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

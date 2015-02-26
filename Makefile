@@ -3,6 +3,7 @@ DOC_ROOT=/var/www/html/biostat/dev/publications
 DB_FILE=$(PWD)/db/publications.db
 SQL_FILES=${shell find ${PWD}/sql -name '*.sql'}
 DB_SCHEMA_DIR=$(PWD)/lib/perl5
+DSN=dbi:mysql:dbname=$(DB);host=$(DB_HOST)
 
 all: setup get-faculty get-publications clean-author-names get-abstracts
 
@@ -14,7 +15,7 @@ $(SQL_FILES):
 load_db: $(SQL_FILES)
 
 rebuild_schema:
-	perl -MDBIx::Class::Schema::Loader=make_schema_at,dump_to_dir:$(DB_SCHEMA_DIR) -e 'make_schema_at("Biostat::Publications::DB::Schema", {debug => 1}, [ "dbi:SQLite:$(DB_FILE)" ])'
+	perl -MDBIx::Class::Schema::Loader=make_schema_at,dump_to_dir:$(DB_SCHEMA_DIR) -e 'make_schema_at("Biostat::Publications::DB::Schema", {debug => 1}, [ "$(DSN)", "$(DB_USER)", "$(DB_PASS)" ])'
 
 setup:
 	mkdir -p db/ public/json/abstracts public/json/faculty

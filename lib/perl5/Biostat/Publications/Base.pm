@@ -3,7 +3,7 @@ package Biostat::Publications::Base;
 use base 'Import::Base';
 
 our @IMPORT_MODULES = (
-  'lib'         => [qq($ENV{HOME}/src/biostat/lib/perl5)],
+  'lib'         => [qq($ENV{HOME}/projects/biostat/lib/perl5)],
   'FindBin'     => [qw($Bin)],
   'Carp'        => [qw(carp croak)],
   'Text::Names' => [qw(cleanName samePerson reverseName)],

@@ -26,12 +26,14 @@ __PACKAGE__->table("urls");
 =head2 id
 
   data_type: 'integer'
+  extra: {unsigned => 1}
   is_auto_increment: 1
   is_nullable: 0
 
 =head2 faculty_id
 
   data_type: 'integer'
+  extra: {unsigned => 1}
   is_foreign_key: 1
   is_nullable: 0
 
@@ -44,9 +46,19 @@ __PACKAGE__->table("urls");
 
 __PACKAGE__->add_columns(
   "id",
-  { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
+  {
+    data_type => "integer",
+    extra => { unsigned => 1 },
+    is_auto_increment => 1,
+    is_nullable => 0,
+  },
   "faculty_id",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
+  {
+    data_type => "integer",
+    extra => { unsigned => 1 },
+    is_foreign_key => 1,
+    is_nullable => 0,
+  },
   "url",
   { data_type => "text", is_nullable => 0 },
 );
@@ -77,12 +89,12 @@ __PACKAGE__->belongs_to(
   "faculty",
   "Biostat::Publications::DB::Schema::Result::Faculty",
   { id => "faculty_id" },
-  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+  { is_deferrable => 1, on_delete => "CASCADE", on_update => "CASCADE" },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-05-08 09:42:01
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:TmDMklMUR1sybkqk43g6WQ
+# Created by DBIx::Class::Schema::Loader v0.07042 @ 2015-02-20 09:56:39
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:X0I30TBP/mm2ApabPz7YSA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
