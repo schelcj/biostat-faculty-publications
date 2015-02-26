@@ -40,6 +40,20 @@ helper faculty => sub {
   return $c->db->resultset('Faculty')->find($c->faculty_id);
 };
 
+get '/departments' => sub {
+  my $c = shift;
+  $c->render(
+    json => [
+      map +{
+        id   => $_->id,
+        name => $_->name,
+        abbr => $_->abbr,
+      },
+      $c->db->resultset('Department')->all()
+    ]
+  );
+};
+
 get '/faculty' => sub {
   my $c = shift;
   my @faculty = $c->db->resultset('Faculty')->search({dept_id => $c->dept_id});
