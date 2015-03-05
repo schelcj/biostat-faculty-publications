@@ -1,5 +1,6 @@
 WWW_HOST=www.sph.umich.edu
 DOC_ROOT=/var/www/html/biostat/dev/publications
+DEV_DOC_ROOT=/var/www/html/publications
 DB_FILE=$(PWD)/db/publications.db
 SQL_FILES=${shell find ${PWD}/sql -name '*.sql'}
 DB_SCHEMA_DIR=$(PWD)/lib/perl5
@@ -34,6 +35,9 @@ clean-author-names:
 
 install:
 	rsync -v -a --no-owner --no-group --no-times --no-perms --delete public/ $(WWW_HOST):$(DOC_ROOT)/
+
+install-dev:
+	rsync -v -a --delete public/ $(DEV_DOC_ROOT)
 
 install-cpan-deps:
 	carton install

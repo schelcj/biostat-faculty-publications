@@ -75,21 +75,30 @@ get '/faculty' => sub {
 get '/publications/:faculty_id' => sub {
   my $c = shift;
 
+  my $article_ref = [
+    map +{
+      title          => $_->title,
+      timescited     => $_->timescited,
+      scopuseid      => $_->scopuseid,
+      author         => $_->authors,
+      year           => $_->year,
+      journal_title  => $_->journal,
+      journal_volume => $_->volume,
+      pages          => $_->pages,
+      pmid           => $_->pmid,
+      pubmed_url     => $_->pubmed_url,
+    },
+    $c->faculty->publications
+  ];
+
   $c->render(
-    json => [
-      map +{
-        title          => $_->title,
-        timescited     => $_->timescited,
-        scopuseid      => $_->scopuseid,
-        author         => $_->authors,
-        year           => $_->year,
-        journal_title  => $_->journal,
-        journal_volume => $_->volume,
-        pages          => $_->pages,
-        pmid           => $_->pmid,
+    json => {
+      umod_realname => $c->faculty->realname,
+      publications  => {
+        article => $article_ref,
+        count   => scalar @{$article_ref},
       },
-      $c->faculty->publications
-    ]
+    }
   );
 };
 

@@ -1,5 +1,7 @@
 if (typeof(jQuery) != 'undefined') { (function($) {
   $(function() {
+    var api_url = '/publications/api';
+
     var common_words = {
       'is':    1,
       'as':    1,
@@ -57,9 +59,9 @@ if (typeof(jQuery) != 'undefined') { (function($) {
       return params;
     }
 
-    $.getJSON('json/faculty.json?' + Date.now(), function(data) {
+    $.getJSON(api_url + '/faculty.json?' + Date.now(), function(data) {
       $(data).each(function(i,e) {
-        $('#faculty').append($('<option />', {id: e.uniqname, text: e.cleanname}));
+        $('#faculty').append($('<option />', {id: e.id, text: e.realname}));
       });
 
       $('#faculty').select2({
@@ -70,10 +72,10 @@ if (typeof(jQuery) != 'undefined') { (function($) {
     });
 
     $('#faculty').change(function() {
-      var uniqname = $('select#faculty option:selected').attr('id');
+      var faculty_id = $('select#faculty option:selected').attr('id');
       $('#cloud').empty();
 
-      $.getJSON('json/faculty/' + uniqname + '.json?' + Date.now(), function(data) {
+      $.getJSON(api_url + '/publications/' + faculty_id + '?' + Date.now(), function(data) {
         var publications    = new Array;
         var publication_map = new Object;
         var co_authors      = new Object;
@@ -85,30 +87,30 @@ if (typeof(jQuery) != 'undefined') { (function($) {
           publications.push([
             article.title,
             article.timescited,
-            article.scopusEID,
+            article.scopuseid,
             article.author,
             article.year,
-            article.journalTitle,
-            article.journalVolume,
+            article.journal_title,
+            article.journal_volume,
             article.pages
           ]);
 
-          publication_map[article.scopusEID] = {
+          publication_map[article.scopuseid] = {
             title:   article.title,
             cited:   article.timescited,
             author:  article.author,
-            journal: article.journalTitle,
+            journal: article.journal_title,
             year:    article.year,
-            url:     article.pubmedURL,
+            url:     article.pubmed_url,
             pmid:    article.pmid,
             abst:    ''
           };
 
-          var c = isNaN(journals[article.journalTitle]) ? 0 : journals[article.journalTitle];
+          var c = isNaN(journals[article.journal_title]) ? 0 : journals[article.journal_title];
           c++;
-          journals[article.journalTitle] = c;
+          journals[article.journal_title] = c;
 
-          var authors = article.clean_author.split('; ');
+          var authors = article.author.split('; ');
           for (var author in authors) {
             if (authors[author].toLowerCase() != data.umod_realname.toLowerCase()) {
               var count = isNaN(co_authors[authors[author]]) ? 0 : co_authors[authors[author]];
@@ -260,8 +262,8 @@ if (typeof(jQuery) != 'undefined') { (function($) {
                   var eid         = $(this.st.el).attr('id').slice(10);
                   var publication = publication_map[eid];
 
-                  $.getJSON('json/abstracts/' + publication.pmid + '.json?' + Date.now(), function(data) {
-                    publication['abst'] = data.abstract;
+                  $.getJSON(api_url + '/abstracts/' + publication.pmid + '?' + Date.now(), function(data) {
+                    publication['abst'] = data.text;
                   }).always(function() {
                     mfp.items = [publication];
                     mfp.index = 0;

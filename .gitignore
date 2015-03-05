@@ -2,3 +2,4 @@ local/
 public/json/
 db/
 log/
+vars

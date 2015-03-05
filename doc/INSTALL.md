@@ -17,6 +17,6 @@
 
     ProxyRequests Off
     ProxyPreserveHost On
-    ProxyPass /publications/ http://localhost:8080/ keepalive=On
-    ProxyPassReverse /publications/ http://localhost:8080/
+    ProxyPass /publications/api/ http://localhost:8080/ keepalive=On
+    ProxyPassReverse /publications/api/ http://localhost:8080/
     RequestHeader set X-Forwarded-Proto "http"
