@@ -8,4 +8,4 @@ create table abstracts (
   primary key (id),
   key (pmid),
   foreign key (pmid) references publications(pmid) on delete cascade on update cascade
-);
+) collate utf8_general_ci;

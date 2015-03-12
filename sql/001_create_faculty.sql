@@ -13,4 +13,4 @@ create table faculty (
   unique key (gid),
   key (dept_id),
   foreign key fk_dept(dept_id) references departments(id) on delete cascade on update cascade
-);
+) collate utf8_general_ci;

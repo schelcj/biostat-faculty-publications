@@ -13,7 +13,7 @@ sub opt_spec {
 sub validate_args {
   my ($self, $opt, $args) = @_;
 
-  if ($opt->{source} !~ /google|msis/i) {
+  if (not defined $opt->{source} or $opt->{source} !~ /google|msis/i) {
     $self->usage_error('Source must be one of (google | msis)');
   }
 }

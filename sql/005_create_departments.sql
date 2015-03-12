@@ -8,4 +8,4 @@ create table departments (
   primary key (id),
   unique key (name),
   unique key (abbr)
-);
+) collate utf8_general_ci;

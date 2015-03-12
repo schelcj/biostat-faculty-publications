@@ -23,17 +23,20 @@ sub _build_raw {
 
 sub _build_articles {
   my ($self) = @_;
-  my $pub_ref = from_json($self->raw);
+  my $pub_ref = from_json($self->raw, {utf8 => 1});
   return $pub_ref->{publications}->{article};
 }
 
 sub get_publications {
   my ($self) = @_;
 
+  my $dbh = Biostat::Publications::DB->new();
+
   my @publications = ();
   for my $article (@{$self->articles}) {
     push @publications,
       Biostat::Publication->new(
+        db         => $dbh,
         faculty_id => $self->faculty_id,
         src_url    => $self->url,
         scival_url => $article->{scivalURL},
@@ -42,11 +45,12 @@ sub get_publications {
         volume     => $article->{journalVolume},
         issue      => $article->{journalIssue},
         pages      => $article->{pages},
-        authors    => $article->{author},
+        authors    => $article->{author} // $EMPTY,
         year       => $article->{year},
         timescited => $article->{timescited},
         pmid       => $article->{pmid},
         scopuseid  => $article->{scopusEID},
+        pubmed_url => $article->{pubmedURL},
       );
   }
 

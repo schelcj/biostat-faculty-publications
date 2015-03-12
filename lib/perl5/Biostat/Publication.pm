@@ -2,10 +2,11 @@ package Biostat::Publication;
 
 use Biostat::Publications::Base qw(biostat moose);
 
-has 'faculty_id' => (is => 'ro', isa => 'Int', required => 1);
-has 'src_url'    => (is => 'ro', isa => 'Str', required => 1);
+has 'db'         => (is => 'ro', isa => 'Biostat::Publications::DB', required => 1);
+has 'faculty_id' => (is => 'ro', isa => 'Int',                       required => 1);
+has 'src_url'    => (is => 'ro', isa => 'Str',                       required => 1);
 has 'title'      => (is => 'ro', isa => 'Str');
-has 'authors'    => (is => 'ro', isa => 'Str');
+has 'authors'    => (is => 'ro', isa => 'Maybe[Str]', trigger => \&_set_authors);
 has 'pubmed_url' => (is => 'ro', isa => 'Maybe[Str]');
 has 'scival_url' => (is => 'ro', isa => 'Maybe[Str]');
 has 'abstract'   => (is => 'ro', isa => 'Maybe[Str]');
@@ -19,27 +20,23 @@ has 'timescited' => (is => 'ro', isa => 'Maybe[Int]');
 has 'pmid'       => (is => 'ro', isa => 'Maybe[Int]');
 has 'scopuseid'  => (is => 'ro', isa => 'Maybe[Int]');
 
-has 'db' => (is => 'ro', isa => 'Biostat::Publications::DB', lazy => 1, builder => '_build_db');
-
-around 'authors' => sub {
-  my ($orig, $self) = @_;
+sub _set_authors {
+  my ($self, $new, $prev) = @_;
 
   my $faculty  = $self->db->resultset('Faculty')->find($self->faculty_id);
   my $realname = $faculty->realname;
   my @authors  = map {(samePerson($realname, $_)) ? $realname : $_}
-    map {reverseName(cleanName($_))} split(/$SEMICOLON\s/, $self->$orig);
+    map {cleanName($_)} split(/$SEMICOLON\s/, $new);
 
-  return join($SEMICOLON . $SPACE, @authors);
+  $self->{authors} = join($SEMICOLON . $SPACE, @authors);
+
+  return;
 };
-
-sub _build_db {
-  return Biostat::Publications::DB->new();
-}
 
 sub to_hashref {
   my ($self) = @_;
   my $attr_ref = +{map {($_->name => $_->get_value($self, $_->name))} $self->meta->get_all_attributes};
-  map {delete $attr_ref->{$_}} (qw(db));
+  map {delete $attr_ref->{$_}} (qw(db abstract));
   return $attr_ref;
 }
 
@@ -56,12 +53,15 @@ sub save {
 
   unless ($count) {
     $self->db->resultset('Publication')->create($self->to_hashref);
-    $self->db->resultset('Abstract')->create(
-      {
-        pmid => $self->pmid,
-        text => $self->abstract // $EMPTY,
-      }
-    );
+
+    if ($self->pmid) {
+      $self->db->resultset('Abstract')->create(
+        {
+          pmid => $self->pmid,
+          text => $self->abstract // $EMPTY,
+        }
+      );
+    }
   }
 
   return $TRUE;
